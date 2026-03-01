@@ -11,7 +11,7 @@
 
 ## 🚀 Funcionalidades Principais
 
-*   **ORM Inteligente:** Mapeie suas classes Delphi diretamente para tabelas do banco de dados usando Atributos customizados (`[Table]`, `[Column]`, `[PrimaryKey]`), eliminando SQL repetitivo.
+*   **ORM Inteligente:** Mapeie suas classes Delphi diretamente para tabelas do banco de dados usando Atributos customizados (`[Entity]`, `[Column]`, `[PrimaryKey]`), eliminando SQL repetitivo.
 *   **Arquitetura MVC:** Separação clara de responsabilidades com `Controllers` para regras de negócio e `Models` para persistência.
 *   **Multi-Database:** Suporte a SQL Server, SQLite, MySQL, PostgreSQL, Oracle e Firebird via FireDAC.
 *   **Multiplataforma:** Suporte a Windows e Linux com configuração automática de drivers.
@@ -101,20 +101,19 @@ Decore sua classe com os atributos do framework:
 
 ```delphi
 type
-  [Table('TB_CLIENTE')]
+  [Entity('TB_CLIENTE')]
   TCliente = class
   private
     // IMPORTANTE: Para o motor de Alta Performance (FastRTTI),
     // os campos privados DEVEM seguir o padrão 'F' + NomeDaPropriedade.
     // Ex: property Nome -> field FNome
-    
-    [Column('ID', True, True)] // Nome, PrimaryKey, AutoInc
+    [Id(True)] //Define a coluna como chave primária autoincremento
+    [Column('ID', 0, False)] // Nome, Size, Nullable
     FId: Integer;
     
-    [Column('NOME')]
-    [Required('O nome é obrigatório')]
+    [Column('NOME', 100, False)]
     FNome: String;
-
+'    
     [BelongsTo('ID_GRUPO')]
     FGrupo: TLazy<TGrupo>;
 
