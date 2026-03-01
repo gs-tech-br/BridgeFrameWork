@@ -1,0 +1,36 @@
+#!/bin/sh
+
+# Redireciona saida para stderr para garantir que seja vista
+exec 1>&2
+
+# Verifica se é o commit inicial
+if git rev-parse --verify HEAD >/dev/null 2>&1
+then
+    against=HEAD
+else
+    # Initial commit: diff against an empty tree object
+    against=4b825dc642cb6eb9a060e54bf8d69288fbee4904
+fi
+
+# Verifica se arquivos de código (.pas, .dfm, .dpr) foram modificados no stage
+CODE_CHANGED=$(git diff --cached --name-only $against | grep -E '\.(pas|dfm|dpr)$')
+README_CHANGED=$(git diff --cached --name-only $against | grep -E '^README\.md$')
+
+# Se houve mudança em código mas NÃO no README
+if [ -n "$CODE_CHANGED" ] && [ -z "$README_CHANGED" ]; then
+    echo "======================================================================"
+    echo "⚠️  ATENÇÃO: Alterações em código detectadas, mas o README ficou igual!"
+    echo "======================================================================"
+    echo "Arquivos alterados:"
+    echo "$CODE_CHANGED"
+    echo ""
+    echo "Por favor, garanta que a documentação (README.md) esteja atualizada."
+    echo "Sugestão: Use a skill 'readme_guardian' para revisar as mudanças."
+    echo ""
+    echo "Para ignorar este aviso e commitar mesmo assim, use:"
+    echo "git commit -m 'mensagem' --no-verify"
+    echo "======================================================================"
+    exit 1
+fi
+
+exit 0

@@ -1,0 +1,38 @@
+{
+	"hash": "d41d8cd98f00b204e9800998ecf8427e",
+	"updated": "2026-02-02T21:52:09.3259649-03:00",
+	"installedModules": {
+		"github.com/andre-djsystem/hashlib4pascal": {
+			"name": "hashlib4pascal",
+			"version": "1.0.0",
+			"hash": "8528036224699ab509c7d8f31d691ffb",
+			"artifacts": {},
+			"failed": false,
+			"changed": true
+		},
+		"github.com/hashload/horse": {
+			"name": "horse",
+			"version": "3.1.9",
+			"hash": "ad7ee68a3fa37f9ca203791f350c1e2b",
+			"artifacts": {},
+			"failed": false,
+			"changed": true
+		},
+		"github.com/paolo-rossi/delphi-jose-jwt": {
+			"name": "delphi-jose-jwt",
+			"version": "v3.3.1",
+			"hash": "30168430005de681e90bef999de6804a",
+			"artifacts": {},
+			"failed": false,
+			"changed": true
+		},
+		"github.com/paolo-rossi/delphi-neon": {
+			"name": "delphi-neon",
+			"version": "v3.2.0",
+			"hash": "9366898ecae85717f110295f58dbb88a",
+			"artifacts": {},
+			"failed": false,
+			"changed": false
+		}
+	}
+}

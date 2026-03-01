@@ -1,0 +1,11 @@
+{
+	"name": "BridgeFrameWork",
+	"description": "",
+	"version": "1.0.0",
+	"homepage": "",
+	"mainsrc": "./src",
+	"projects": [],
+	"dependencies": {
+		"github.com/paolo-rossi/delphi-neon": "^v3.2.0"
+	}
+}

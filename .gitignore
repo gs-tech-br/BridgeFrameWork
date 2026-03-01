@@ -1,0 +1,17 @@
+__history
+__recovery
+*.dcu
+*.exe
+*.ident
+*.local
+*.stat
+*.tvsconfig
+*.log
+*.rsm
+*.db
+*.db-journal
+*-journal
+/dcu/*.bpi
+/dcu/*.dcp
+/dcu/*.lib
+
