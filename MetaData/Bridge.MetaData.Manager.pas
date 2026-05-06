@@ -27,6 +27,8 @@ type
   public
     class function NameOf<T: class>(const APropName: string): string; overload;
     class function NameOf(AClass: TClass; const APropName: string): string; overload;
+    class function ColumnOf<T: class>(const APropName: string): string; overload;
+    class function ColumnOf(AClass: TClass; const APropName: string): string; overload;
   end;
 
   TReservedVocabulary = class
@@ -708,8 +710,7 @@ end;
 
 function TMetaDataHelper.Column(const APropertyName: string): string;
 begin
-  TMetaDataUtils.NameOf(Self.ClassType, APropertyName);
-  Result := TMetaDataManager.Instance.ResolveColumnName(Self.ClassType, APropertyName);
+  Result := TMetaDataUtils.ColumnOf(Self.ClassType, APropertyName);
 end;
 
 function TMetaDataHelper.ApplySoftDelete: Boolean;
@@ -796,6 +797,16 @@ end;
 class function TMetaDataUtils.NameOf<T>(const APropName: string): string;
 begin
   Result := NameOf(T, APropName);
+end;
+
+class function TMetaDataUtils.ColumnOf(AClass: TClass; const APropName: string): string;
+begin
+  Result := TMetaDataManager.Instance.ResolveColumnName(AClass, NameOf(AClass, APropName));
+end;
+
+class function TMetaDataUtils.ColumnOf<T>(const APropName: string): string;
+begin
+  Result := ColumnOf(T, APropName);
 end;
 
 initialization

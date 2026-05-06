@@ -59,6 +59,7 @@ type
     procedure Put(Req: THorseRequest; Res: THorseResponse; Next: TProc); override;
     procedure Patch(Req: THorseRequest; Res: THorseResponse; Next: TProc); override;
     procedure Del(Req: THorseRequest; Res: THorseResponse; Next: TProc); overload; override;
+    procedure RegisterRoutes(App: THorse; const BasePath: string); override;
   end;
 
 implementation
@@ -136,6 +137,75 @@ begin
   // Base creates TBaseModel. We overwrite with TModel.
   // Using TBaseModelClass cast to helper access the virtual constructor
   FModel := TBaseModelClass(TModel).Create(AConnection);
+end;
+
+procedure TRestController<T, TModel>.RegisterRoutes(App: THorse; const BasePath: string);
+type
+  TBaseCtrlClass = class of TBaseController;
+var
+  LCtrlClass: TBaseCtrlClass;
+  LPathId, LPathPaged, LPath: string;
+begin
+  LCtrlClass := TBaseCtrlClass(Self.ClassType);
+  LPath := '/' + BasePath;
+  LPathPaged := '/' + BasePath + '/paged';
+  LPathId := '/' + BasePath + '/:id';
+
+  App.Get(LPath, 
+    procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
+    var LCtrl: TRestController<T, TModel>;
+    begin
+      LCtrl := LCtrlClass.Create(TConnectionPool.GetInstance.AcquireConnection) as TRestController<T, TModel>;
+      try LCtrl.GetAll(Req, Res, Next); finally LCtrl.Free; end;
+    end);
+
+  App.Get(LPathPaged, 
+    procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
+    var LCtrl: TRestController<T, TModel>;
+    begin
+      LCtrl := LCtrlClass.Create(TConnectionPool.GetInstance.AcquireConnection) as TRestController<T, TModel>;
+      try LCtrl.GetAllPaged(Req, Res, Next); finally LCtrl.Free; end;
+    end);
+
+  App.Get(LPathId, 
+    procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
+    var LCtrl: TRestController<T, TModel>;
+    begin
+      LCtrl := LCtrlClass.Create(TConnectionPool.GetInstance.AcquireConnection) as TRestController<T, TModel>;
+      try LCtrl.Get(Req, Res, Next); finally LCtrl.Free; end;
+    end);
+
+  App.Post(LPath, 
+    procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
+    var LCtrl: TRestController<T, TModel>;
+    begin
+      LCtrl := LCtrlClass.Create(TConnectionPool.GetInstance.AcquireConnection) as TRestController<T, TModel>;
+      try LCtrl.Post(Req, Res, Next); finally LCtrl.Free; end;
+    end);
+
+  App.Put(LPathId, 
+    procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
+    var LCtrl: TRestController<T, TModel>;
+    begin
+      LCtrl := LCtrlClass.Create(TConnectionPool.GetInstance.AcquireConnection) as TRestController<T, TModel>;
+      try LCtrl.Put(Req, Res, Next); finally LCtrl.Free; end;
+    end);
+
+  App.Patch(LPathId, 
+    procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
+    var LCtrl: TRestController<T, TModel>;
+    begin
+      LCtrl := LCtrlClass.Create(TConnectionPool.GetInstance.AcquireConnection) as TRestController<T, TModel>;
+      try LCtrl.Patch(Req, Res, Next); finally LCtrl.Free; end;
+    end);
+
+  App.Delete(LPathId, 
+    procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
+    var LCtrl: TRestController<T, TModel>;
+    begin
+      LCtrl := LCtrlClass.Create(TConnectionPool.GetInstance.AcquireConnection) as TRestController<T, TModel>;
+      try LCtrl.Del(Req, Res, Next); finally LCtrl.Free; end;
+    end);
 end;
 
 procedure TRestController<T, TModel>.Get(Req: THorseRequest; Res: THorseResponse; Next: TProc);
