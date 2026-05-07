@@ -106,6 +106,13 @@ procedure TConnectionPool.ReleaseConnection(const AConnection: IConnection);
 begin
   if AConnection = nil then Exit;
 
+  try
+    if AConnection.InTransaction then
+      AConnection.Rollback;
+  except
+    Exit;
+  end;
+
   FInternalLock.Enter;
   try
     // Only return to pool if we haven't exceeded usage (simple logic for now)

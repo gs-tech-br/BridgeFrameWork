@@ -153,58 +153,121 @@ begin
 
   App.Get(LPath, 
     procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
-    var LCtrl: TRestController<T, TModel>;
+    var
+      LConn: IConnection;
+      LCtrl: TRestController<T, TModel>;
     begin
-      LCtrl := LCtrlClass.Create(TConnectionPool.GetInstance.AcquireConnection) as TRestController<T, TModel>;
-      try LCtrl.GetAll(Req, Res, Next); finally LCtrl.Free; end;
+      LConn := TConnectionPool.GetInstance.AcquireConnection;
+      LCtrl := nil;
+      try
+        LCtrl := LCtrlClass.Create(LConn) as TRestController<T, TModel>;
+        LCtrl.GetAll(Req, Res, Next);
+      finally
+        LCtrl.Free;
+        TConnectionPool.GetInstance.ReleaseConnection(LConn);
+      end;
     end);
 
   App.Get(LPathPaged, 
     procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
-    var LCtrl: TRestController<T, TModel>;
+    var
+      LConn: IConnection;
+      LCtrl: TRestController<T, TModel>;
     begin
-      LCtrl := LCtrlClass.Create(TConnectionPool.GetInstance.AcquireConnection) as TRestController<T, TModel>;
-      try LCtrl.GetAllPaged(Req, Res, Next); finally LCtrl.Free; end;
+      LConn := TConnectionPool.GetInstance.AcquireConnection;
+      LCtrl := nil;
+      try
+        LCtrl := LCtrlClass.Create(LConn) as TRestController<T, TModel>;
+        LCtrl.GetAllPaged(Req, Res, Next);
+      finally
+        LCtrl.Free;
+        TConnectionPool.GetInstance.ReleaseConnection(LConn);
+      end;
     end);
 
   App.Get(LPathId, 
     procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
-    var LCtrl: TRestController<T, TModel>;
+    var
+      LConn: IConnection;
+      LCtrl: TRestController<T, TModel>;
     begin
-      LCtrl := LCtrlClass.Create(TConnectionPool.GetInstance.AcquireConnection) as TRestController<T, TModel>;
-      try LCtrl.Get(Req, Res, Next); finally LCtrl.Free; end;
+      LConn := TConnectionPool.GetInstance.AcquireConnection;
+      LCtrl := nil;
+      try
+        LCtrl := LCtrlClass.Create(LConn) as TRestController<T, TModel>;
+        LCtrl.Get(Req, Res, Next);
+      finally
+        LCtrl.Free;
+        TConnectionPool.GetInstance.ReleaseConnection(LConn);
+      end;
     end);
 
   App.Post(LPath, 
     procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
-    var LCtrl: TRestController<T, TModel>;
+    var
+      LConn: IConnection;
+      LCtrl: TRestController<T, TModel>;
     begin
-      LCtrl := LCtrlClass.Create(TConnectionPool.GetInstance.AcquireConnection) as TRestController<T, TModel>;
-      try LCtrl.Post(Req, Res, Next); finally LCtrl.Free; end;
+      LConn := TConnectionPool.GetInstance.AcquireConnection;
+      LCtrl := nil;
+      try
+        LCtrl := LCtrlClass.Create(LConn) as TRestController<T, TModel>;
+        LCtrl.Post(Req, Res, Next);
+      finally
+        LCtrl.Free;
+        TConnectionPool.GetInstance.ReleaseConnection(LConn);
+      end;
     end);
 
   App.Put(LPathId, 
     procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
-    var LCtrl: TRestController<T, TModel>;
+    var
+      LConn: IConnection;
+      LCtrl: TRestController<T, TModel>;
     begin
-      LCtrl := LCtrlClass.Create(TConnectionPool.GetInstance.AcquireConnection) as TRestController<T, TModel>;
-      try LCtrl.Put(Req, Res, Next); finally LCtrl.Free; end;
+      LConn := TConnectionPool.GetInstance.AcquireConnection;
+      LCtrl := nil;
+      try
+        LCtrl := LCtrlClass.Create(LConn) as TRestController<T, TModel>;
+        LCtrl.Put(Req, Res, Next);
+      finally
+        LCtrl.Free;
+        TConnectionPool.GetInstance.ReleaseConnection(LConn);
+      end;
     end);
 
   App.Patch(LPathId, 
     procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
-    var LCtrl: TRestController<T, TModel>;
+    var
+      LConn: IConnection;
+      LCtrl: TRestController<T, TModel>;
     begin
-      LCtrl := LCtrlClass.Create(TConnectionPool.GetInstance.AcquireConnection) as TRestController<T, TModel>;
-      try LCtrl.Patch(Req, Res, Next); finally LCtrl.Free; end;
+      LConn := TConnectionPool.GetInstance.AcquireConnection;
+      LCtrl := nil;
+      try
+        LCtrl := LCtrlClass.Create(LConn) as TRestController<T, TModel>;
+        LCtrl.Patch(Req, Res, Next);
+      finally
+        LCtrl.Free;
+        TConnectionPool.GetInstance.ReleaseConnection(LConn);
+      end;
     end);
 
   App.Delete(LPathId, 
     procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
-    var LCtrl: TRestController<T, TModel>;
+    var
+      LConn: IConnection;
+      LCtrl: TRestController<T, TModel>;
     begin
-      LCtrl := LCtrlClass.Create(TConnectionPool.GetInstance.AcquireConnection) as TRestController<T, TModel>;
-      try LCtrl.Del(Req, Res, Next); finally LCtrl.Free; end;
+      LConn := TConnectionPool.GetInstance.AcquireConnection;
+      LCtrl := nil;
+      try
+        LCtrl := LCtrlClass.Create(LConn) as TRestController<T, TModel>;
+        LCtrl.Del(Req, Res, Next);
+      finally
+        LCtrl.Free;
+        TConnectionPool.GetInstance.ReleaseConnection(LConn);
+      end;
     end);
 end;
 
