@@ -77,6 +77,8 @@ type
     LogicOperator: TLogicOperator;
     constructor Create(const AColumn, ASQLOperator: string; AValue: Variant; ALogic: TLogicOperator = loAND); overload;
     constructor Create(const AColumn, ASQLOperator: string; AValue, AValue2: Variant; ALogic: TLogicOperator = loAND); overload;
+    constructor Create(const AColumn: string; AOperator: TComparisonOperator; AValue: Variant; ALogic: TLogicOperator = loAND); overload;
+    constructor Create(const AColumn: string; AOperator: TComparisonOperator; AValue, AValue2: Variant; ALogic: TLogicOperator = loAND); overload;
     constructor Create(AType: TCriterionType; ALogic: TLogicOperator = loAND); overload;
   end;
 
@@ -131,6 +133,25 @@ end;
 
 { TCriterion }
 
+function ComparisonOperatorToSQL(const AOperator: TComparisonOperator): string;
+begin
+  case AOperator of
+    coEqual: Result := '=';
+    coGreater: Result := '>';
+    coLess: Result := '<';
+    coNotEqual: Result := '<>';
+    coLike: Result := 'LIKE';
+    coIN: Result := 'IN';
+    coBetween: Result := 'BETWEEN';
+    coGreaterEqual: Result := '>=';
+    coLessEqual: Result := '<=';
+    coIsNull: Result := 'IS NULL';
+    coIsNotNull: Result := 'IS NOT NULL';
+  else
+    Result := '=';
+  end;
+end;
+
 constructor TCriterion.Create(const AColumn, ASQLOperator: string; AValue: Variant;
   ALogic: TLogicOperator);
 begin
@@ -151,6 +172,18 @@ begin
   Value := AValue;
   Value2 := AValue2;
   LogicOperator := ALogic;
+end;
+
+constructor TCriterion.Create(const AColumn: string; AOperator: TComparisonOperator;
+  AValue: Variant; ALogic: TLogicOperator);
+begin
+  Create(AColumn, ComparisonOperatorToSQL(AOperator), AValue, ALogic);
+end;
+
+constructor TCriterion.Create(const AColumn: string; AOperator: TComparisonOperator;
+  AValue, AValue2: Variant; ALogic: TLogicOperator);
+begin
+  Create(AColumn, ComparisonOperatorToSQL(AOperator), AValue, AValue2, ALogic);
 end;
 
 constructor TCriterion.Create(AType: TCriterionType; ALogic: TLogicOperator);
