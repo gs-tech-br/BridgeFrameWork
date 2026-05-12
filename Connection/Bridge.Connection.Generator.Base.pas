@@ -143,6 +143,12 @@ begin
 
         LColumnName := LPropMeta.ColumnName;
         LValue := TFastField.GetAsVariant(AObject, LPropMeta.Offset, LPropMeta.TypeKind);
+        // Para TDateTime: RttiField.FieldType.Name = 'TDateTime', mas TypeKind = tkFloat.
+        // VarFromDateTime garante varDate em vez de varDouble, igual ao insert/update completo.
+        if (LPropMeta.TypeKind = tkFloat) and
+           Assigned(LPropMeta.RttiField) and
+           SameText(LPropMeta.RttiField.FieldType.Name, 'TDateTime') then
+          LValue := VarFromDateTime(TDateTime(Double(LValue)));
 
         // Build SET clause with parameters
         LParamName := 'p' + IntToStr(LParamIndex);
