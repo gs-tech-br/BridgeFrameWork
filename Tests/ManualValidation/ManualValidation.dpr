@@ -45,6 +45,7 @@ uses
   Tests.Infrastructure in 'Tests.Infrastructure.pas',
   Tests.Features in 'Tests.Features.pas',
   Tests.Lazy in 'Tests.Lazy.pas',
+  Tests.JsonIgnore in 'Tests.JsonIgnore.pas',
   Bridge.MetaData.Mapper in '..\..\MetaData\Bridge.MetaData.Mapper.pas',
   Bridge.Connection.Base in '..\..\Connection\Bridge.Connection.Base.pas',
   Bridge.Connection.Generator.Interfaces in '..\..\Connection\Bridge.Connection.Generator.Interfaces.pas',
@@ -150,6 +151,7 @@ begin
     RunSoftDeleteTest;
     RunAsyncTest;
     RunLazyTest;
+    RunJsonIgnoreTest;
     RunMasterDetailTest;
     TestDebugMetadata;
     TestCursorPagination;

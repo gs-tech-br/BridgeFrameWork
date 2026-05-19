@@ -139,6 +139,7 @@
         <DCCReference Include="Tests.Infrastructure.pas"/>
         <DCCReference Include="Tests.Features.pas"/>
         <DCCReference Include="Tests.Lazy.pas"/>
+        <DCCReference Include="Tests.JsonIgnore.pas"/>
         <DCCReference Include="..\..\MetaData\Bridge.MetaData.Mapper.pas"/>
         <DCCReference Include="..\..\Connection\Bridge.Connection.Base.pas"/>
         <DCCReference Include="..\..\Connection\Bridge.Connection.Generator.Interfaces.pas"/>

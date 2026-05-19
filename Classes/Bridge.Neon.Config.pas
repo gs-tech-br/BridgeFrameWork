@@ -116,6 +116,8 @@ type
     function Deserialize(AValue: TJSONValue; const AData: TValue; ANeonObject: TNeonRttiObject; AContext: IDeserializerContext): TValue; override;
   end;
 
+  TBridgeJsonDirection = (bjdSerialize, bjdDeserialize);
+
 function BridgeTypeName(AType: PTypeInfo): string;
 begin
   if Assigned(AType) then
@@ -174,21 +176,44 @@ begin
   Result := TCaseAlgorithm.PascalToCamel(LName);
 end;
 
-function BridgeFieldIgnored(AField: TRttiField; AType: TRttiType): Boolean;
+function BridgeAttributeIgnoredForJSON(AAttr: TCustomAttribute; ADirection: TBridgeJsonDirection): Boolean;
+var
+  LJsonIgnore: JsonIgnoreAttribute;
+begin
+  Result := False;
+
+  if AAttr is IgnoreAttribute then
+    Exit(True);
+
+  if AAttr is JsonIgnoreAttribute then
+  begin
+    LJsonIgnore := JsonIgnoreAttribute(AAttr);
+    case ADirection of
+      bjdSerialize:
+        Result := LJsonIgnore.IgnoreSerialize;
+      bjdDeserialize:
+        Result := LJsonIgnore.IgnoreDeserialize;
+    end;
+  end;
+end;
+
+function BridgeFieldIgnoredForJSON(AField: TRttiField; AType: TRttiType; ADirection: TBridgeJsonDirection): Boolean;
 var
   LAttr: TCustomAttribute;
   LProp: TRttiProperty;
   LPropName: string;
 begin
   Result := False;
+  if not Assigned(AField) then
+    Exit;
 
   for LAttr in AField.GetAttributes do
   begin
-    if LAttr is IgnoreAttribute then
+    if BridgeAttributeIgnoredForJSON(LAttr, ADirection) then
       Exit(True);
   end;
 
-  if not AField.Name.StartsWith('F') then
+  if not Assigned(AType) or not AField.Name.StartsWith('F') then
     Exit;
 
   LPropName := AField.Name.Substring(1);
@@ -197,10 +222,20 @@ begin
   begin
     for LAttr in LProp.GetAttributes do
     begin
-      if LAttr is IgnoreAttribute then
+      if BridgeAttributeIgnoredForJSON(LAttr, ADirection) then
         Exit(True);
     end;
   end;
+end;
+
+function BridgeFieldIgnoredForJSONSerialize(AField: TRttiField; AType: TRttiType): Boolean;
+begin
+  Result := BridgeFieldIgnoredForJSON(AField, AType, bjdSerialize);
+end;
+
+function BridgeFieldIgnoredForJSONDeserialize(AField: TRttiField; AType: TRttiType): Boolean;
+begin
+  Result := BridgeFieldIgnoredForJSON(AField, AType, bjdDeserialize);
 end;
 
 function BridgeFieldIsRelation(AField: TRttiField): Boolean;
@@ -354,27 +389,28 @@ begin
   LCurrentDepth := GBridgeNeonRelationDepth;
   Inc(GBridgeNeonRelationDepth);
   try
-    LMetaData := TMetaDataManager.Instance.GetMetaData(LObject);
-    for LPropMeta in LMetaData.AllProperties do
-    begin
-      if not Assigned(LPropMeta.RttiField) then
-        Continue;
-
-      LFieldValue := LPropMeta.RttiField.GetValue(LObject);
-      LJSONValue := AContext.WriteDataMember(LFieldValue, True);
-      if Assigned(LJSONValue) then
-        LJSON.AddPair(BridgeFieldToJSONName(LPropMeta.RttiField.Name), LJSONValue);
-    end;
-
-    if LCurrentDepth >= BRIDGE_NEON_MAX_RELATION_DEPTH then
-      Exit;
-
     LContext := TRttiContext.Create;
     try
       LType := LContext.GetType(LObject.ClassType);
+
+      LMetaData := TMetaDataManager.Instance.GetMetaData(LObject);
+      for LPropMeta in LMetaData.AllProperties do
+      begin
+        if not Assigned(LPropMeta.RttiField) or BridgeFieldIgnoredForJSONSerialize(LPropMeta.RttiField, LType) then
+          Continue;
+
+        LFieldValue := LPropMeta.RttiField.GetValue(LObject);
+        LJSONValue := AContext.WriteDataMember(LFieldValue, True);
+        if Assigned(LJSONValue) then
+          LJSON.AddPair(BridgeFieldToJSONName(LPropMeta.RttiField.Name), LJSONValue);
+      end;
+
+      if (LCurrentDepth >= BRIDGE_NEON_MAX_RELATION_DEPTH) or not Assigned(LType) then
+        Exit;
+
       for LField in LType.GetFields do
       begin
-        if BridgeFieldIgnored(LField, LType) or not BridgeFieldIsRelation(LField) then
+        if BridgeFieldIgnoredForJSONSerialize(LField, LType) or not BridgeFieldIsRelation(LField) then
           Continue;
 
         LFieldValue := LField.GetValue(LObject);
@@ -400,6 +436,8 @@ var
   LPropMeta: TPropertyMeta;
   LCurrentValue: TValue;
   LFieldValue: TValue;
+  LContext: TRttiContext;
+  LType: TRttiType;
 begin
   Result := AData;
   if not (AValue is TJSONObject) or not AData.IsObject then
@@ -412,19 +450,25 @@ begin
   LJSONObject := TJSONObject(AValue);
   LMetaData := TMetaDataManager.Instance.GetMetaData(LObject);
 
-  for LPropMeta in LMetaData.AllProperties do
-  begin
-    if not Assigned(LPropMeta.RttiField) then
-      Continue;
+  LContext := TRttiContext.Create;
+  try
+    LType := LContext.GetType(LObject.ClassType);
+    for LPropMeta in LMetaData.AllProperties do
+    begin
+      if not Assigned(LPropMeta.RttiField) or BridgeFieldIgnoredForJSONDeserialize(LPropMeta.RttiField, LType) then
+        Continue;
 
-    LJSONValue := LJSONObject.GetValue(BridgeFieldToJSONName(LPropMeta.RttiField.Name));
-    if not Assigned(LJSONValue) then
-      Continue;
+      LJSONValue := LJSONObject.GetValue(BridgeFieldToJSONName(LPropMeta.RttiField.Name));
+      if not Assigned(LJSONValue) then
+        Continue;
 
-    LCurrentValue := LPropMeta.RttiField.GetValue(LObject);
-    LFieldValue := AContext.ReadDataMember(LJSONValue, LPropMeta.RttiField.FieldType, LCurrentValue, True);
-    if not LFieldValue.IsEmpty then
-      LPropMeta.RttiField.SetValue(LObject, LFieldValue);
+      LCurrentValue := LPropMeta.RttiField.GetValue(LObject);
+      LFieldValue := AContext.ReadDataMember(LJSONValue, LPropMeta.RttiField.FieldType, LCurrentValue, True);
+      if not LFieldValue.IsEmpty then
+        LPropMeta.RttiField.SetValue(LObject, LFieldValue);
+    end;
+  finally
+    LContext.Free;
   end;
 
   Result := AData;

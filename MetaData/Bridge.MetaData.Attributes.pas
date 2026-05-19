@@ -61,6 +61,20 @@ type
   end;
 
   /// <summary>
+  /// Attribute to ignore a field/property only during JSON serialization and/or deserialization.
+  /// Unlike IgnoreAttribute, this does not affect ORM mapping.
+  /// </summary>
+  JsonIgnoreAttribute = class(TCustomAttribute)
+  private
+    FIgnoreSerialize: Boolean;
+    FIgnoreDeserialize: Boolean;
+  public
+    constructor Create(AIgnoreSerialize: Boolean = True; AIgnoreDeserialize: Boolean = True);
+    property IgnoreSerialize: Boolean read FIgnoreSerialize;
+    property IgnoreDeserialize: Boolean read FIgnoreDeserialize;
+  end;
+
+  /// <summary>
   /// Marks a property as a lazy-loaded reference to another entity (N:1).
   /// The referenced entity is loaded on first access.
   /// </summary>
@@ -246,6 +260,15 @@ end;
 constructor CompositeKeyAttribute.Create;
 begin
   inherited Create;
+end;
+
+{ JsonIgnoreAttribute }
+
+constructor JsonIgnoreAttribute.Create(AIgnoreSerialize, AIgnoreDeserialize: Boolean);
+begin
+  inherited Create;
+  FIgnoreSerialize := AIgnoreSerialize;
+  FIgnoreDeserialize := AIgnoreDeserialize;
 end;
 
 { CaptionAttribute }
