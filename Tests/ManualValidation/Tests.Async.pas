@@ -61,7 +61,7 @@ begin
       LController.SaveAsync(LPerson,
         procedure(AResult: TValidate)
         begin
-          LSuccess := AResult.Sucess;
+          LSuccess := AResult.Success;
           if not LSuccess then
             LErrorMsg := AResult.Message;
           LCompleted := True;
@@ -149,7 +149,7 @@ begin
       LController.SaveAsync(LPerson,
         procedure(AResult: TValidate)
         begin
-          LSuccess := AResult.Sucess;
+          LSuccess := AResult.Success;
           if not LSuccess then
             LErrorMsg := AResult.Message;
           LCompleted := True;
@@ -231,7 +231,7 @@ begin
       LController.DeleteAsync(LPerson,
         procedure(AResult: TValidate)
         begin
-          LSuccess := AResult.Sucess;
+          LSuccess := AResult.Success;
           if not LSuccess then
             LErrorMsg := AResult.Message;
           LCompleted := True;
@@ -324,7 +324,7 @@ begin
       LController.RestoreAsync(LPerson,
         procedure(AResult: TValidate)
         begin
-          LSuccess := AResult.Sucess;
+          LSuccess := AResult.Success;
           if not LSuccess then
             LErrorMsg := AResult.Message;
           LCompleted := True;

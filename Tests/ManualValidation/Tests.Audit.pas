@@ -144,7 +144,7 @@ begin
       
       Writeln('    - Inserting entity...');
       LResult := LController.Insert(LEntity);
-      if not LResult.Sucess then
+      if not LResult.Success then
         raise Exception.Create('Insert failed: ' + LResult.Message);
       Writeln('    - Entity inserted');
     
@@ -218,7 +218,7 @@ begin
       LEntity.Value := 999.99;
       
       LResult := LController.Update(LEntity);
-      if not LResult.Sucess then
+      if not LResult.Success then
         raise Exception.Create('Update failed: ' + LResult.Message);
       
       LAuditController := TAuditController.Create(TConnectionSingleton.GetInstance);
@@ -283,7 +283,7 @@ begin
       LEntity.Id := 100;
       
       LResult := LController.Delete(LEntity);
-      if not LResult.Sucess then
+      if not LResult.Success then
         raise Exception.Create('Delete failed: ' + LResult.Message);
       
       LAuditController := TAuditController.Create(TConnectionSingleton.GetInstance);

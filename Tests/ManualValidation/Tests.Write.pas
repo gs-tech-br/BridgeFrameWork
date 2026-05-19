@@ -162,7 +162,7 @@ begin
     try
       LPerson.Id := LId;
       LResult := LController.Delete(LPerson);
-      if LResult.Sucess then
+      if LResult.Success then
         Writeln('    [PASS] Delete returned success')
       else
         Writeln('    [FAIL] Delete failed: ', LResult.Message);
@@ -240,7 +240,7 @@ begin
       LPerson.Name := 'Modified';
       LPerson.Age := 35;
       LResult := LController.Update(LPerson);
-      if LResult.Sucess then
+      if LResult.Success then
         Writeln('    [PASS] Update returned success')
       else
       begin

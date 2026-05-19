@@ -67,7 +67,7 @@ begin
       // 1. Insert Master
       LMaster.Description := 'Master Record ' + FormatDateTime('hh:nn:ss', Now);
       Writeln('Inserting Master...');
-      if not LController.Insert(LMaster).Sucess then
+      if not LController.Insert(LMaster).Success then
         raise Exception.Create('Failed to insert Master');
       
       LMasterId := LMaster.Id;
@@ -89,7 +89,7 @@ begin
       // Let's create a temporary detail controller for insertion to be safe and correct.
       with TDetailController.Create(LConnection) do
       try
-        if not Insert(LDetail).Sucess then
+        if not Insert(LDetail).Success then
           raise Exception.Create('Failed to insert Detail');
       finally
         Free;

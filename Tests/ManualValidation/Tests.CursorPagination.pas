@@ -77,7 +77,7 @@ begin
           LOrderBy,
           nil);
         
-        if LResult.Sucess then
+        if LResult.Success then
         begin
           // Exibir apenas os registros NOVOS (últimos 5 adicionados)
           // Como LoadNext não limpa a lista, ela acumula
@@ -107,7 +107,7 @@ begin
           WriteLn('  Erro: ', LResult.Message);
         end;
         
-      until not LResult.Sucess;
+      until not LResult.Success;
       
       WriteLn;
       WriteLn(Format('Total de páginas carregadas: %d', [LPageNum - 1]));

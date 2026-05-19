@@ -69,17 +69,17 @@ begin
       LPerson.Name := 'Alice';
       LPerson.Age := 20;
       LResult := LController.Insert(LPerson);
-      Assert(LResult.Sucess, 'Insert Alice failed: ' + LResult.Message);
+      Assert(LResult.Success, 'Insert Alice failed: ' + LResult.Message);
 
       LPerson.Name := 'Bob';
       LPerson.Age := 30;
       LResult := LController.Insert(LPerson);
-      Assert(LResult.Sucess, 'Insert Bob failed: ' + LResult.Message);
+      Assert(LResult.Success, 'Insert Bob failed: ' + LResult.Message);
 
       LPerson.Name := 'Charlie';
       LPerson.Age := 40;
       LResult := LController.Insert(LPerson);
-      Assert(LResult.Sucess, 'Insert Charlie failed: ' + LResult.Message);
+      Assert(LResult.Success, 'Insert Charlie failed: ' + LResult.Message);
     finally
       LPerson.Free;
     end;

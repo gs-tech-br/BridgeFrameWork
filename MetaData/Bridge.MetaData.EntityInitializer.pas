@@ -59,6 +59,8 @@ implementation
 
 class function TEntityInitializer.GetPropertyValueByColumn(AObject: TObject; const AColumnName: string): Variant;
 var
+  LMetaData: TEntityMetaData;
+  LPropMeta: TPropertyMeta;
   LType: TRttiType;
   LProp: TRttiProperty;
   LAttr: TCustomAttribute;
@@ -66,6 +68,23 @@ var
   LIsIgnored: Boolean;
 begin
   Result := Null;
+
+  if not Assigned(AObject) then
+    Exit;
+
+  LMetaData := TMetaDataManager.Instance.GetMetaData(AObject);
+  for LPropMeta in LMetaData.AllProperties do
+  begin
+    if SameText(LPropMeta.ColumnName, AColumnName) or
+       (Assigned(LPropMeta.RttiField) and
+        LPropMeta.RttiField.Name.StartsWith('F') and
+        SameText(LPropMeta.RttiField.Name.Substring(1), AColumnName)) then
+    begin
+      Result := TFastField.GetAsVariant(AObject, LPropMeta.Offset, LPropMeta.TypeKind);
+      Exit;
+    end;
+  end;
+
   LType := TRttiHelper.Context.GetType(AObject.ClassType);
 
   for LProp in LType.GetProperties do
@@ -143,11 +162,12 @@ begin
       begin
         LHasMany := HasManyAttribute(LAttr);
         
-        // Distinguish between TLazyList<T> (record) and TObjectList<T> (class)
-        if LField.FieldType.TypeKind = tkRecord then
+        // Distinguish between TLazyList<T> and TObjectList<T>
+        if (LField.FieldType.TypeKind = tkClass) and
+           LField.FieldType.Name.Contains('TLazyList<') then
            InitAnyHasMany(AEntity, LField, LPKValue, LHasMany.ForeignKeyColumn, AConnection)
         else if (LField.FieldType.TypeKind = tkClass) and 
-                (LField.FieldType.Name.StartsWith('TObjectList<')) then
+                (LField.FieldType.Name.Contains('TObjectList<')) then
            InitAnyHasManyList(AEntity, LField, LPKValue, LHasMany.ForeignKeyColumn, AConnection);
       end;
     end;

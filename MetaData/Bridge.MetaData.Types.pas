@@ -4,7 +4,7 @@ interface
 
 type
   TValidate = record
-    Sucess: Boolean;
+    Success: Boolean;
     &Message: string;
   end;
 

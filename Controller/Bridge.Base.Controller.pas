@@ -371,19 +371,19 @@ begin
   LResult := TValidationHelper.ValidateRequiredFields(Sender);
   if not LResult.IsValid then
   begin
-    Result.Sucess := False;
+    Result.Success := False;
     Result.Message := LResult.ToString;
     Exit;
   end;
 
   LResult := TValidationHelper.ValidateFieldLengths(Sender);
-  Result.Sucess := LResult.IsValid;
+  Result.Success := LResult.IsValid;
   Result.Message := LResult.ToString;
 end;
 
 function TBaseController.allowsDelete(Sender: TObject): TValidate;
 begin
-  Result.Sucess := True;
+  Result.Success := True;
   Result.Message := EmptyStr;
 end;
 
@@ -394,31 +394,31 @@ begin
   LResult := TValidationHelper.ValidateRequiredFields(Sender);
   if not LResult.IsValid then
   begin
-    Result.Sucess := False;
+    Result.Success := False;
     Result.Message := LResult.ToString;
     Exit;
   end;
 
   LResult := TValidationHelper.ValidateFieldLengths(Sender);
-  Result.Sucess := LResult.IsValid;
+  Result.Success := LResult.IsValid;
   Result.Message := LResult.ToString;
 end;
 
 function TBaseController.UpdatePartial(Sender: TObject; const AFieldsToUpdate: TArray<string>): TValidate;
 begin
   Result := Self.allowsUpdate(Sender);
-  if not Result.Sucess then
+  if not Result.Success then
     Exit;
 
   try
     Self.BeforeUpdate(Sender);
     FModel.UpdatePartial(Sender, AFieldsToUpdate);
-    Result.Sucess := True;
+    Result.Success := True;
     Self.AfterUpdate(Sender);
   except
     on E: Exception do
     begin
-      Result.Sucess := False;
+      Result.Success := False;
       Result.Message := E.Message;
     end;
   end;
@@ -431,7 +431,7 @@ var
   LRefId: Variant;
 begin
   LValidation := Self.allowsDelete(Sender);
-  if not LValidation.Sucess then
+  if not LValidation.Success then
     Exit;
 
   LOldValue := nil;
@@ -460,12 +460,12 @@ begin
       if TAuditManager.IsAuditEnabled(Sender) then
         TAuditManager.CaptureAudit(FModel.Connection, Sender, 'DELETE', LOldValue, FAuditUser.UserId, FAuditUser.UserName);
 
-      Result.Sucess := True;
+      Result.Success := True;
       Self.AfterDelete(Sender);
     except
       on E: Exception do
       begin
-        Result.Sucess := False;
+        Result.Success := False;
         Result.Message := E.Message;
       end;
     end;
@@ -485,11 +485,11 @@ begin
     // No specific allowsRestore hooks requested yet.
     
     FModel.Restore(Sender);
-    Result.Sucess := True;
+    Result.Success := True;
   except
     on E: Exception do
     begin
-      Result.Sucess := False;
+      Result.Success := False;
       Result.Message := E.Message;
     end;
   end;
@@ -510,14 +510,14 @@ begin
     LId := TFastField.GetAsVariant(Sender, LMetaData.PrimaryKeyOffset, LMetaData.PrimaryKeyTypeKind);
     if (VarIsNull(LId) or VarIsEmpty(LId) or ((VarType(LId) in [varInteger, varSmallInt, varByte, varInt64]) and (LId = 0))) then
     begin
-      Result.Sucess := False;
+      Result.Success := False;
       Result.Message := Format(SControllerPKRequired, [LMetaData.PrimaryKeyColumn]);
       Exit;
     end;
   end;
 
   Result := Self.allowsInsert(Sender);
-  if not Result.Sucess then
+  if not Result.Success then
     Exit;
 
   try
@@ -528,12 +528,12 @@ begin
     if TAuditManager.IsAuditEnabled(Sender) then
       TAuditManager.CaptureAudit(FModel.Connection, Sender, 'INSERT', nil, FAuditUser.UserId, FAuditUser.UserName);
       
-    Result.Sucess := True;
+    Result.Success := True;
     Self.AfterInsert(Sender);
   except
     on E: Exception do
     begin
-      Result.Sucess := False;
+      Result.Success := False;
       Result.Message := E.Message;
     end;
   end;
@@ -547,7 +547,7 @@ var
   LMetaData: TEntityMetaData;
 begin
   Result := Self.allowsUpdate(Sender);
-  if not Result.Sucess then
+  if not Result.Success then
     Exit;
 
   LOldValue := nil;
@@ -576,12 +576,12 @@ begin
       if TAuditManager.IsAuditEnabled(Sender) then
         TAuditManager.CaptureAudit(FModel.Connection, Sender, 'UPDATE', LOldValue, FAuditUser.UserId, FAuditUser.UserName);
 
-      Result.Sucess := True;
+      Result.Success := True;
       Self.AfterUpdate(Sender);
     except
       on E: Exception do
       begin
-        Result.Sucess := False;
+        Result.Success := False;
         Result.Message := E.Message;
       end;
     end;
@@ -645,6 +645,7 @@ begin
     if not LQuery.IsEmpty then
     begin
       MapDataSetToEntity(LQuery, Sender);
+      InitializeLazyProperties(Sender);
       Result := True;
     end;
   finally

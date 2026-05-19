@@ -1,4 +1,4 @@
-unit Bridge.Controller.Helper;
+﻿unit Bridge.Controller.Helper;
 
 interface
 
@@ -267,7 +267,7 @@ end;
 
 function TControllerHelper.InsertBatch<T>(const AList: TObjectList<T>): TValidate;
 begin
-  Result.Sucess := True;
+  Result.Success := True;
   if (not Assigned(AList)) or (AList.Count = 0) then
     Exit;
 
@@ -276,7 +276,7 @@ begin
   except
     on E: Exception do
     begin
-      Result.Sucess := False;
+      Result.Success := False;
       Result.Message := E.Message;
     end;
   end;
@@ -284,7 +284,7 @@ end;
 
 function TControllerHelper.UpdateBatch<T>(const AList: TObjectList<T>): TValidate;
 begin
-  Result.Sucess := True;
+  Result.Success := True;
   if (not Assigned(AList)) or (AList.Count = 0) then
     Exit;
 
@@ -293,7 +293,7 @@ begin
   except
     on E: Exception do
     begin
-      Result.Sucess := False;
+      Result.Success := False;
       Result.Message := E.Message;
     end;
   end;
@@ -301,7 +301,7 @@ end;
 
 function TControllerHelper.DeleteBatch<T>(const AList: TObjectList<T>): TValidate;
 begin
-  Result.Sucess := True;
+  Result.Success := True;
   if (not Assigned(AList)) or (AList.Count = 0) then
     Exit;
 
@@ -310,7 +310,7 @@ begin
   except
     on E: Exception do
     begin
-      Result.Sucess := False;
+      Result.Success := False;
       Result.Message := E.Message;
     end;
   end;
@@ -332,18 +332,18 @@ var
   LMetaData: TEntityMetaData;
   LMappings: TBaseController.TFieldMappingList;
 begin
-  Result.Sucess := True;
+  Result.Success := True;
 
   if not Assigned(AList) then
   begin
-    Result.Sucess := False;
+    Result.Success := False;
     Result.Message := 'AList cannot be nil';
     Exit;
   end;
   
   if APageSize <= 0 then
   begin
-    Result.Sucess := False;
+    Result.Success := False;
     Result.Message := 'APageSize must be greater than zero';
     Exit;
   end;
@@ -359,7 +359,7 @@ begin
     
     if not Assigned(LQuery) then
     begin
-      Result.Sucess := False;
+      Result.Success := False;
       Result.Message := 'Failed to execute pagination query';
       Exit;
     end;
@@ -381,7 +381,7 @@ begin
               on E: Exception do
               begin
                 LItem.Free;
-                Result.Sucess := False;
+                Result.Success := False;
                 Result.Message := 'Error mapping entity: ' + E.Message;
                 Exit;
               end;
@@ -399,7 +399,7 @@ begin
   except
     on E: Exception do
     begin
-      Result.Sucess := False;
+      Result.Success := False;
       Result.Message := 'Error in cursor pagination: ' + E.Message;
     end;
   end;

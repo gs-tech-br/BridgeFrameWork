@@ -175,7 +175,7 @@ begin
       // O Controller captura exceções internas e retorna em TValidate
       LValidate := LController.UpdatePartial(LPerson, ['InvalidField']);
       
-      if not LValidate.Sucess then
+      if not LValidate.Success then
         WriteLn('  ✓ Sucesso: Erro detectado corretamente: ', LValidate.Message)
       else
         WriteLn('  ✗ Erro: Deveria ter retornado Sucess = False para campo inválido');

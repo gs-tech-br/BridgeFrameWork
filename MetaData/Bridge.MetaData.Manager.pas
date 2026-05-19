@@ -770,6 +770,7 @@ end;
 
 { TMetaDataUtils }
 
+{$HINTS OFF}
 class function TMetaDataUtils.NameOf(AClass: TClass; const APropName: string): string;
 var
   LType: TRttiType;
@@ -793,6 +794,7 @@ begin
   end;
   {$ENDIF}
 end;
+{$HINTS ON}
 
 class function TMetaDataUtils.NameOf<T>(const APropName: string): string;
 begin

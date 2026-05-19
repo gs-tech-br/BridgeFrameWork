@@ -522,7 +522,7 @@ begin
         // Update only the specified fields in the database
         LValidate := Self.UpdatePartial(TObject(LEntity), LFieldsToUpdate);
 
-        if LValidate.Sucess then
+        if LValidate.Success then
         begin
           LResponseJson := TBridgeNeon.ObjectToJSONObject(TObject(LEntity));
           try
@@ -568,7 +568,7 @@ begin
         
         LValidate := Self.Insert(TObject(LEntity));
         
-        if LValidate.Sucess then
+        if LValidate.Success then
         begin
           LResponseJson := TBridgeNeon.ObjectToJSONObject(TObject(LEntity));
           try
@@ -620,7 +620,7 @@ begin
         
         LValidate := Self.Update(TObject(LEntity));
         
-        if LValidate.Sucess then
+        if LValidate.Success then
         begin
           LResponseJson := TBridgeNeon.ObjectToJSONObject(TObject(LEntity));
           try
@@ -657,7 +657,7 @@ begin
 
         LValidate := Self.Delete(TObject(LEntity));
         
-        if LValidate.Sucess then
+        if LValidate.Success then
           Res.Status(THTTPStatus.NoContent)
         else
           Res.Status(THTTPStatus.BadRequest).Send(LValidate.Message);

@@ -122,7 +122,7 @@ begin
           LOrderBy,
           nil);
         
-        if LResult.Sucess then
+        if LResult.Success then
         begin
           // Exibir apenas os registros NOVOS (últimos 5 adicionados)
           for I := Max(0, LList.Count - 5) to LList.Count - 1 do
@@ -151,7 +151,7 @@ begin
           WriteLn('  (Sem mais registros)');
         end;
         
-      until not LResult.Sucess;
+      until not LResult.Success;
       
       WriteLn;
       WriteLn(Format('Total de páginas carregadas: %d', [LPageNum - 1]));
