@@ -68,6 +68,8 @@ uses
   Tests.CursorTieBreaking in 'Tests.CursorTieBreaking.pas',
   Tests.Async in 'Tests.Async.pas',
   Tests.Patch in 'Tests.Patch.pas',
+  Bridge.ResponseProtection in '..\..\Classes\Bridge.ResponseProtection.pas',
+  Bridge.ResponseProtection.Entity in '..\..\Security\Bridge.ResponseProtection.Entity.pas',
   Bridge.Rest.Controller in '..\..\Controller\Bridge.Rest.Controller.pas',
   Bridge.Neon.Config in '..\..\Classes\Bridge.Neon.Config.pas',
   Bridge.Audit in '..\..\Audit\Bridge.Audit.pas',
@@ -77,7 +79,8 @@ uses
   Bridge.Audit.Entity in '..\..\Audit\Bridge.Audit.Entity.pas',
   Tests.QueryBuilder in 'Tests.QueryBuilder.pas',
   Bridge.Controller.QueryBuilder in '..\..\Controller\Bridge.Controller.QueryBuilder.pas',
-  Bridge.Horse.Pagination in '..\..\Classes\Bridge.Horse.Pagination.pas';
+  Bridge.Horse.Pagination in '..\..\Classes\Bridge.Horse.Pagination.pas',
+  Tests.ResponseProtection in 'Tests.ResponseProtection.pas';
 
 begin
   try
@@ -161,6 +164,7 @@ begin
     RunAllPatchTests;
     RunAllPatchTests;
     RunAuditTest;
+    RunResponseProtectionTest;
     
     Writeln('');
     Writeln('>>> QUERY BUILDER TESTS <<<');

@@ -21,7 +21,8 @@ uses
   Bridge.Controller.Interfaces,
   Bridge.Base.Controller,
   Bridge.Controller.Errors,
-  Bridge.Horse.Pagination;
+  Bridge.Horse.Pagination,
+  Bridge.ResponseProtection;
 
 type
   TBaseModelClass = class of TBaseModel;
@@ -326,6 +327,12 @@ begin
            (LQueryName = 'order_by') or (LQueryName = 'order_desc') then
           Continue;
 
+        if not TBridgeResponseProtectionManager.CanAccessProperty(T, LPair.Key) then
+        begin
+          Res.Status(THTTPStatus.Forbidden).Send('Forbidden filter field: ' + LPair.Key);
+          Exit;
+        end;
+
         LColName := TMetaDataManager.Instance.ResolveColumnName(T, LPair.Key);
         LVal := LPair.Value;
         
@@ -360,6 +367,13 @@ begin
       end;
       
       LParams := THorseCursorPagination.ParseParams(Req, 20); // Default 20
+      if (not LParams.OrderBy.Trim.IsEmpty) and
+         (not TBridgeResponseProtectionManager.CanAccessProperty(T, LParams.OrderBy)) then
+      begin
+        Res.Status(THTTPStatus.Forbidden).Send('Forbidden order field: ' + LParams.OrderBy);
+        Exit;
+      end;
+
       LLastItem := THorseCursorPagination.DecodeCursor<T>(LParams.CursorStr);
       try
         // Request one extra item to check if there are more pages
@@ -405,6 +419,12 @@ begin
            (LQueryName = 'order_by') or (LQueryName = 'order_desc') then
           Continue;
 
+        if not TBridgeResponseProtectionManager.CanAccessProperty(T, LPair.Key) then
+        begin
+          Res.Status(THTTPStatus.Forbidden).Send('Forbidden filter field: ' + LPair.Key);
+          Exit;
+        end;
+
         LColName := TMetaDataManager.Instance.ResolveColumnName(T, LPair.Key);
         LVal := LPair.Value;
         
@@ -439,6 +459,13 @@ begin
       end;
       
       LParams := THorseCursorPagination.ParseParams(Req, 20); // Default 20
+      if (not LParams.OrderBy.Trim.IsEmpty) and
+         (not TBridgeResponseProtectionManager.CanAccessProperty(T, LParams.OrderBy)) then
+      begin
+        Res.Status(THTTPStatus.Forbidden).Send('Forbidden order field: ' + LParams.OrderBy);
+        Exit;
+      end;
+
       LLastItem := THorseCursorPagination.DecodeCursor<T>(LParams.CursorStr);
       
       try
@@ -451,7 +478,7 @@ begin
             LList.Delete(LList.Count - 1); // Remove the extra item
             
           if LList.Count > 0 then
-            LNextCursor := THorseCursorPagination.EncodeCursor(TObject(LList.Last))
+            LNextCursor := THorseCursorPagination.EncodeCursor(TObject(LList.Last), LParams.GetOrderByItems)
           else
             LNextCursor := '';
             

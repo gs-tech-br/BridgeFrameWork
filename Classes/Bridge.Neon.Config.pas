@@ -83,7 +83,8 @@ implementation
 
 uses
   Bridge.MetaData.Attributes,
-  Bridge.MetaData.Manager;
+  Bridge.MetaData.Manager,
+  Bridge.ResponseProtection;
 
 const
   BRIDGE_NEON_MAX_RELATION_DEPTH = 1;
@@ -378,6 +379,7 @@ var
   LField: TRttiField;
   LFieldValue: TValue;
   LCurrentDepth: Integer;
+  LProtectedMeta: TProtectedFieldMeta;
 begin
   LObject := AValue.AsObject;
   if not Assigned(LObject) then
@@ -398,6 +400,23 @@ begin
       begin
         if not Assigned(LPropMeta.RttiField) or BridgeFieldIgnoredForJSONSerialize(LPropMeta.RttiField, LType) then
           Continue;
+
+        if TBridgeResponseProtectionManager.TryGetProtectedField(LMetaData, LPropMeta, LProtectedMeta) and
+           (not TBridgeResponseProtectionManager.CanAccessField(LObject.ClassType, LProtectedMeta)) then
+        begin
+          case LProtectedMeta.DenyStrategy of
+            pfNull:
+              LJSON.AddPair(LProtectedMeta.JSONName, TJSONNull.Create);
+            pfMask:
+              if LProtectedMeta.MaskValue.IsEmpty then
+                LJSON.AddPair(LProtectedMeta.JSONName, '***')
+              else
+                LJSON.AddPair(LProtectedMeta.JSONName, LProtectedMeta.MaskValue);
+          else
+            // pfRemove: do not add the pair.
+          end;
+          Continue;
+        end;
 
         LFieldValue := LPropMeta.RttiField.GetValue(LObject);
         LJSONValue := AContext.WriteDataMember(LFieldValue, True);

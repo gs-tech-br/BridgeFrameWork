@@ -150,6 +150,37 @@ type
   AuditAttribute = class(TCustomAttribute)
   end;
 
+  /// <summary>
+  /// Strategy applied when a protected field cannot be exposed in JSON.
+  /// </summary>
+  TProtectedFieldDenyStrategy = (pfRemove, pfNull, pfMask);
+
+  /// <summary>
+  /// Marks a field/property as protected in JSON responses.
+  /// The ORM mapping remains unchanged; only the response pipeline uses this.
+  /// </summary>
+  ProtectedFieldAttribute = class(TCustomAttribute)
+  private
+    FPrivilegeCode: string;
+    FDenyStrategy: TProtectedFieldDenyStrategy;
+    FCategory: string;
+    FPurpose: string;
+    FMaskValue: string;
+  public
+    constructor Create(
+      const APrivilegeCode: string;
+      ADenyStrategy: TProtectedFieldDenyStrategy = pfRemove;
+      const ACategory: string = '';
+      const APurpose: string = '';
+      const AMaskValue: string = '***');
+
+    property PrivilegeCode: string read FPrivilegeCode;
+    property DenyStrategy: TProtectedFieldDenyStrategy read FDenyStrategy;
+    property Category: string read FCategory;
+    property Purpose: string read FPurpose;
+    property MaskValue: string read FMaskValue;
+  end;
+
   TAggregationOptions = (taNone, taMax, taCount, taSum, taAvg);
 
   FormatOptionsAttribute = class(TCustomAttribute)
@@ -181,6 +212,20 @@ type
     ColumnName: string;
     IsRequired: Boolean;
     MaxLength: Integer;
+  end;
+
+  TProtectedFieldMeta = record
+    RttiField: TRttiField;
+    Offset: Integer;
+    TypeKind: TTypeKind;
+    PropertyName: string;
+    ColumnName: string;
+    JSONName: string;
+    PrivilegeCode: string;
+    DenyStrategy: TProtectedFieldDenyStrategy;
+    Category: string;
+    Purpose: string;
+    MaskValue: string;
   end;
 
   /// <summary>
@@ -225,6 +270,10 @@ type
 
     // Audit support
     AuditEnabled: Boolean;
+
+    // Response data protection support
+    ResponseProtectionEnabled: Boolean;
+    ProtectedFields: TArray<TProtectedFieldMeta>;
   end;
 
 implementation
@@ -269,6 +318,20 @@ begin
   inherited Create;
   FIgnoreSerialize := AIgnoreSerialize;
   FIgnoreDeserialize := AIgnoreDeserialize;
+end;
+
+{ ProtectedFieldAttribute }
+
+constructor ProtectedFieldAttribute.Create(const APrivilegeCode: string;
+  ADenyStrategy: TProtectedFieldDenyStrategy; const ACategory, APurpose,
+  AMaskValue: string);
+begin
+  inherited Create;
+  FPrivilegeCode := APrivilegeCode;
+  FDenyStrategy := ADenyStrategy;
+  FCategory := ACategory;
+  FPurpose := APurpose;
+  FMaskValue := AMaskValue;
 end;
 
 { CaptionAttribute }

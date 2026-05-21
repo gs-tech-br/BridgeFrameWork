@@ -149,6 +149,8 @@
         <DCCReference Include="Audit\Bridge.Audit.Controller.pas"/>
         <DCCReference Include="Audit\Bridge.Audit.Entity.pas"/>
         <DCCReference Include="Audit\Bridge.Audit.Model.pas"/>
+        <DCCReference Include="Classes\Bridge.ResponseProtection.pas"/>
+        <DCCReference Include="Security\Bridge.ResponseProtection.Entity.pas"/>
         <DCCReference Include="Classes\Bridge.Horse.Pagination.pas"/>
         <DCCReference Include="Connection\Bridge.Driver.Config.pas"/>
         <DCCReference Include="Classes\Bridge.Neon.Config.pas"/>

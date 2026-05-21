@@ -60,6 +60,9 @@ type
     function IsMappableType(ATypeKind: TTypeKind): Boolean;
     function ExtractSoftDeleteMeta(AType: TRttiType): TSoftDeleteMeta;
     function ExtractAuditEnabled(AType: TRttiType): Boolean;
+    function ExtractProtectedFieldMeta(AField: TRttiField; AType: TRttiType;
+      const APropMeta: TPropertyMeta; out AProtectedMeta: TProtectedFieldMeta): Boolean;
+    function FieldToJSONName(const AFieldName: string): string;
 
   public
     class function Instance: TMetaDataManager;
@@ -159,12 +162,15 @@ var
   LType: TRttiType;
   LField: TRttiField;
   LListAll, LListRequired, LListLength: TList<TPropertyMeta>;
+  LListProtected: TList<TProtectedFieldMeta>;
   LPropMeta: TPropertyMeta;
+  LProtectedMeta: TProtectedFieldMeta;
   LColName: string;
   LSize: Integer;
   LIsRequired: Boolean;
   LPropName: string;
 begin
+  Result := Default(TEntityMetaData);
   LType := FContext.GetType(AClassType);
 
   Result.TableName := ExtractTableName(LType);
@@ -206,6 +212,7 @@ begin
   LListAll := TList<TPropertyMeta>.Create;
   LListRequired := TList<TPropertyMeta>.Create;
   LListLength := TList<TPropertyMeta>.Create;
+  LListProtected := TList<TProtectedFieldMeta>.Create;
   try
     for LField in LType.GetFields do
     begin
@@ -237,16 +244,95 @@ begin
 
         if (LSize > 0) and (LField.FieldType.TypeKind in [tkString, tkLString, tkWString, tkUString]) then
           LListLength.Add(LPropMeta);
+
+        if ExtractProtectedFieldMeta(LField, LType, LPropMeta, LProtectedMeta) then
+          LListProtected.Add(LProtectedMeta);
       end;
     end;
     Result.AllProperties := LListAll.ToArray;
     Result.RequiredProperties := LListRequired.ToArray;
     Result.LengthProperties := LListLength.ToArray;
+    Result.ProtectedFields := LListProtected.ToArray;
+    Result.ResponseProtectionEnabled := LListProtected.Count > 0;
   finally
     LListAll.Free;
     LListRequired.Free;
     LListLength.Free;
+    LListProtected.Free;
   end;
+end;
+
+function TMetaDataManager.FieldToJSONName(const AFieldName: string): string;
+var
+  LName: string;
+  LFirstChar: Char;
+begin
+  LName := AFieldName;
+  if LName.StartsWith('F') and (LName.Length > 1) then
+    LName := LName.Substring(1);
+
+  Result := LName;
+  if Result.IsEmpty then
+    Exit;
+
+  LFirstChar := LowerCase(Result.Chars[0]).Chars[0];
+  Result := Result.Remove(0, 1).Insert(0, LFirstChar);
+end;
+
+function TMetaDataManager.ExtractProtectedFieldMeta(AField: TRttiField;
+  AType: TRttiType; const APropMeta: TPropertyMeta;
+  out AProtectedMeta: TProtectedFieldMeta): Boolean;
+var
+  LAttribute: TCustomAttribute;
+  LProtectedAttr: ProtectedFieldAttribute;
+  LProperty: TRttiProperty;
+  LPropName: string;
+begin
+  Result := False;
+  AProtectedMeta := Default(TProtectedFieldMeta);
+  LProtectedAttr := nil;
+
+  for LAttribute in AField.GetAttributes do
+  begin
+    if LAttribute is ProtectedFieldAttribute then
+    begin
+      LProtectedAttr := ProtectedFieldAttribute(LAttribute);
+      Break;
+    end;
+  end;
+
+  LPropName := AField.Name.Substring(1);
+  if not Assigned(LProtectedAttr) then
+  begin
+    LProperty := AType.GetProperty(LPropName);
+    if Assigned(LProperty) then
+    begin
+      for LAttribute in LProperty.GetAttributes do
+      begin
+        if LAttribute is ProtectedFieldAttribute then
+        begin
+          LProtectedAttr := ProtectedFieldAttribute(LAttribute);
+          Break;
+        end;
+      end;
+    end;
+  end;
+
+  if not Assigned(LProtectedAttr) then
+    Exit;
+
+  AProtectedMeta.RttiField := AField;
+  AProtectedMeta.Offset := APropMeta.Offset;
+  AProtectedMeta.TypeKind := APropMeta.TypeKind;
+  AProtectedMeta.PropertyName := LPropName;
+  AProtectedMeta.ColumnName := APropMeta.ColumnName;
+  AProtectedMeta.JSONName := FieldToJSONName(AField.Name);
+  AProtectedMeta.PrivilegeCode := LProtectedAttr.PrivilegeCode;
+  AProtectedMeta.DenyStrategy := LProtectedAttr.DenyStrategy;
+  AProtectedMeta.Category := LProtectedAttr.Category;
+  AProtectedMeta.Purpose := LProtectedAttr.Purpose;
+  AProtectedMeta.MaskValue := LProtectedAttr.MaskValue;
+  Result := True;
 end;
 
 /// <summary>

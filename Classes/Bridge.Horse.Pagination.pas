@@ -10,7 +10,8 @@ uses
   System.NetEncoding,
   Horse,
   Bridge.Neon.Config,
-  Bridge.Connection.Types;
+  Bridge.Connection.Types,
+  Bridge.MetaData.Attributes;
 
 type
   /// <summary>
@@ -37,7 +38,8 @@ type
     /// <summary>
     /// Encodes the current entity into a cursor token (Base64 JSON)
     /// </summary>
-    class function EncodeCursor(AEntity: TObject): string;
+    class function EncodeCursor(AEntity: TObject): string; overload;
+    class function EncodeCursor(AEntity: TObject; const AOrderBy: TArray<TOrderByItem>): string; overload;
 
     /// <summary>
     /// Decodes the cursor token to populate an entity with the values of the last item
@@ -61,6 +63,10 @@ type
   end;
 
 implementation
+
+uses
+  Bridge.MetaData.Manager,
+  Bridge.ResponseProtection;
 
 { THorsePaginationParams }
 
@@ -97,19 +103,86 @@ begin
 end;
 
 class function THorseCursorPagination.EncodeCursor(AEntity: TObject): string;
+begin
+  Result := EncodeCursor(AEntity, []);
+end;
+
+class function THorseCursorPagination.EncodeCursor(AEntity: TObject;
+  const AOrderBy: TArray<TOrderByItem>): string;
 var
-  LJsonObj: TJSONObject;
+  LFullJson: TJSONObject;
+  LCursorJson: TJSONObject;
   LJsonStr: string;
+  LMetaData: TEntityMetaData;
+  LPropMeta: TPropertyMeta;
+  LOrderItem: TOrderByItem;
+
+  procedure AddJsonField(const AJSONName: string);
+  var
+    LValue: TJSONValue;
+  begin
+    if AJSONName.Trim.IsEmpty or Assigned(LCursorJson.GetValue(AJSONName)) then
+      Exit;
+
+    LValue := LFullJson.GetValue(AJSONName);
+    if Assigned(LValue) then
+      LCursorJson.AddPair(AJSONName, LValue.Clone as TJSONValue);
+  end;
+
+  procedure AddPropertyOrColumn(const AName: string);
+  var
+    LItem: TPropertyMeta;
+    LJSONName: string;
+  begin
+    if AName.Trim.IsEmpty then
+      Exit;
+
+    for LItem in LMetaData.AllProperties do
+    begin
+      if SameText(LItem.ColumnName, AName) or
+         (Assigned(LItem.RttiField) and SameText(LItem.RttiField.Name.Substring(1), AName)) or
+         (Assigned(LItem.RttiField) and SameText(TBridgeResponseProtectionManager.FieldNameToJSONName(LItem.RttiField.Name), AName)) then
+      begin
+        LJSONName := TBridgeResponseProtectionManager.FieldNameToJSONName(LItem.RttiField.Name);
+        AddJsonField(LJSONName);
+        Exit;
+      end;
+    end;
+
+    AddJsonField(AName);
+  end;
 begin
   if not Assigned(AEntity) then
     Exit('');
 
-  LJsonObj := TBridgeNeon.ObjectToJSONObject(AEntity);
+  LFullJson := TBridgeNeon.ObjectToJSONObject(AEntity);
+  LCursorJson := TJSONObject.Create;
   try
-    LJsonStr := LJsonObj.ToJSON;
+    LMetaData := TMetaDataManager.Instance.GetMetaData(AEntity);
+
+    for LOrderItem in AOrderBy do
+      AddPropertyOrColumn(LOrderItem.PropertyName);
+
+    if Assigned(LMetaData.CompositeKeyField) then
+      AddJsonField(TBridgeResponseProtectionManager.FieldNameToJSONName(LMetaData.CompositeKeyField.Name));
+
+    if Assigned(LMetaData.PrimaryKeyField) then
+      AddJsonField(TBridgeResponseProtectionManager.FieldNameToJSONName(LMetaData.PrimaryKeyField.Name));
+
+    if (LCursorJson.Count = 0) and (Length(AOrderBy) = 0) then
+    begin
+      for LPropMeta in LMetaData.AllProperties do
+      begin
+        AddJsonField(TBridgeResponseProtectionManager.FieldNameToJSONName(LPropMeta.RttiField.Name));
+        Break;
+      end;
+    end;
+
+    LJsonStr := LCursorJson.ToJSON;
     Result := TNetEncoding.Base64.Encode(LJsonStr);
   finally
-    LJsonObj.Free;
+    LCursorJson.Free;
+    LFullJson.Free;
   end;
 end;
 

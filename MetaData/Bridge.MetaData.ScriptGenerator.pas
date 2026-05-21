@@ -483,7 +483,7 @@ begin
   // Build cursor WHERE clause if ALastItem is provided
   if Assigned(ALastItem) then
   begin
-    LOrderByCount := Length(AOrderBy);
+    LOrderByCount := Length(LOrderBy);
     
     if LOrderByCount = 0 then
     begin
@@ -512,7 +512,7 @@ begin
         for J := 0 to High(LMetaData.AllProperties) do
         begin
           // Compare property name with field name (removing 'F' prefix)
-          if SameText(LMetaData.AllProperties[J].RttiField.Name.Substring(1), AOrderBy[I].PropertyName) then
+          if SameText(LMetaData.AllProperties[J].RttiField.Name.Substring(1), LOrderBy[I].PropertyName) then
           begin
             LPropMeta := LMetaData.AllProperties[J];
             Break;
@@ -520,7 +520,7 @@ begin
         end;
         
         if not Assigned(LPropMeta.RttiField) then
-          raise Exception.CreateFmt('Property %s not found in %s', [AOrderBy[I].PropertyName, AClass.ClassName]);
+          raise Exception.CreateFmt('Property %s not found in %s', [LOrderBy[I].PropertyName, AClass.ClassName]);
           
         LColumnName := LPropMeta.ColumnName;
         
@@ -540,7 +540,7 @@ begin
           for K := 0 to High(LMetaData.AllProperties) do
           begin
             // Compare property name with field name (removing 'F' prefix)
-            if SameText(LMetaData.AllProperties[K].RttiField.Name.Substring(1), AOrderBy[J].PropertyName) then
+            if SameText(LMetaData.AllProperties[K].RttiField.Name.Substring(1), LOrderBy[J].PropertyName) then
             begin
               LPropMeta := LMetaData.AllProperties[K];
               Break;
@@ -573,7 +573,7 @@ begin
         
         // Add comparison for current column (> for ASC, < for DESC)
         LParamName := 'c' + IntToStr(LParamIndex);
-        if AOrderBy[I].Descending then
+        if LOrderBy[I].Descending then
           LSubCondition := LSubCondition + LColumnName + ' < :' + LParamName
         else
           LSubCondition := LSubCondition + LColumnName + ' > :' + LParamName;
@@ -604,16 +604,16 @@ begin
   
   // Build ORDER BY clause
   LOrderClause := '';
-  if Length(AOrderBy) > 0 then
+  if Length(LOrderBy) > 0 then
   begin
-    for I := 0 to High(AOrderBy) do
+    for I := 0 to High(LOrderBy) do
     begin
       // Find column name for property
       LPropMeta := Default(TPropertyMeta);
       for J := 0 to High(LMetaData.AllProperties) do
       begin
         // Compare property name with field name (removing 'F' prefix)
-        if SameText(LMetaData.AllProperties[J].RttiField.Name.Substring(1), AOrderBy[I].PropertyName) then
+        if SameText(LMetaData.AllProperties[J].RttiField.Name.Substring(1), LOrderBy[I].PropertyName) then
         begin
           LPropMeta := LMetaData.AllProperties[J];
           Break;
@@ -626,7 +626,7 @@ begin
           LOrderClause := LOrderClause + ', ';
           
         LOrderClause := LOrderClause + LPropMeta.ColumnName;
-        if AOrderBy[I].Descending then
+        if LOrderBy[I].Descending then
           LOrderClause := LOrderClause + ' DESC'
         else
           LOrderClause := LOrderClause + ' ASC';

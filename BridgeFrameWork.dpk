@@ -99,6 +99,8 @@ contains
   Bridge.Audit.Controller in 'Audit\Bridge.Audit.Controller.pas',
   Bridge.Audit.Entity in 'Audit\Bridge.Audit.Entity.pas',
   Bridge.Audit.Model in 'Audit\Bridge.Audit.Model.pas',
+  Bridge.ResponseProtection in 'Classes\Bridge.ResponseProtection.pas',
+  Bridge.ResponseProtection.Entity in 'Security\Bridge.ResponseProtection.Entity.pas',
   Bridge.Horse.Pagination in 'Classes\Bridge.Horse.Pagination.pas',
   Bridge.Driver.Config in 'Connection\Bridge.Driver.Config.pas',
   Bridge.Neon.Config in 'Classes\Bridge.Neon.Config.pas',

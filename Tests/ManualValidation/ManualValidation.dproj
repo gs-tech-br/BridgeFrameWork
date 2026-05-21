@@ -160,6 +160,8 @@
         <DCCReference Include="Tests.CursorTieBreaking.pas"/>
         <DCCReference Include="Tests.Async.pas"/>
         <DCCReference Include="Tests.Patch.pas"/>
+        <DCCReference Include="..\..\Classes\Bridge.ResponseProtection.pas"/>
+        <DCCReference Include="..\..\Security\Bridge.ResponseProtection.Entity.pas"/>
         <DCCReference Include="..\..\Controller\Bridge.Rest.Controller.pas"/>
         <DCCReference Include="..\..\Classes\Bridge.Neon.Config.pas"/>
         <DCCReference Include="..\..\Audit\Bridge.Audit.pas"/>
@@ -170,6 +172,7 @@
         <DCCReference Include="Tests.QueryBuilder.pas"/>
         <DCCReference Include="..\..\Controller\Bridge.Controller.QueryBuilder.pas"/>
         <DCCReference Include="..\..\Classes\Bridge.Horse.Pagination.pas"/>
+        <DCCReference Include="Tests.ResponseProtection.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
