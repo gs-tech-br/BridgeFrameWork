@@ -67,7 +67,6 @@ uses
 function TNextCaller.Init: TNextCaller;
 var
   LCurrent: string;
-  LParamValue: string;
 begin
   Result := Self;
   if not FIsGroup then
@@ -75,10 +74,7 @@ begin
   FIndex := -1;
   FIndexCallback := -1;
   if FIsParamsKey then
-  begin
-    LParamValue := {$IF DEFINED(FPC)}HTTPDecode(LCurrent){$ELSE}TNetEncoding.URL.Decode(LCurrent){$ENDIF};
-    FRequest.Params.Dictionary.Add(FTag, DecodePossibleUtf8Mojibake(LParamValue));
-  end;
+    FRequest.Params.Dictionary.Add(FTag, {$IF DEFINED(FPC)}HTTPDecode(LCurrent){$ELSE}TNetEncoding.URL.Decode(LCurrent){$ENDIF});
 end;
 
 procedure TNextCaller.Next;

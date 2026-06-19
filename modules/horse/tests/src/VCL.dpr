@@ -52,8 +52,7 @@ uses
   Horse.WebModule in '..\..\src\Horse.WebModule.pas' {HorseWebModule: TWebModule},
   Horse.Core.Param.Field.Brackets in '..\..\src\Horse.Core.Param.Field.Brackets.pas',
   Horse.Core.Files in '..\..\src\Horse.Core.Files.pas',
-  Tests.Horse.Core.Files in 'tests\Tests.Horse.Core.Files.pas',
-  Tests.Horse.Request.Encoding in 'tests\Tests.Horse.Request.Encoding.pas';
+  Tests.Horse.Core.Files in 'tests\Tests.Horse.Core.Files.pas';
 
 var
   runner: ITestRunner;
