@@ -22,6 +22,8 @@ uses
   Horse.Session,
   Horse.Commons;
 
+function DecodePossibleUtf8Mojibake(const AValue: string): string;
+
 type
   THorseRequest = class
   private
@@ -72,9 +74,124 @@ uses
 {$ENDIF}
   Horse.Core.Param.Header;
 
+{$IFNDEF FPC}
+function CountMojibakeMarkers(const AValue: string): Integer;
+var
+  I: Integer;
+begin
+  Result := 0;
+  for I := 1 to Length(AValue) do
+  begin
+    if (AValue[I] = #$00C2) or
+       (AValue[I] = #$00C3) or
+       (AValue[I] = #$00E2) then
+      Inc(Result);
+  end;
+end;
+
+function HasUnicodeReplacementChar(const AValue: string): Boolean;
+begin
+  Result := Pos(#$FFFD, AValue) > 0;
+end;
+
+function TryGetWindows1252Byte(const AChar: Char; out AByte: Byte): Boolean;
+begin
+  Result := True;
+
+  if Ord(AChar) <= $FF then
+  begin
+    AByte := Byte(Ord(AChar));
+    Exit;
+  end;
+
+  case Ord(AChar) of
+    $20AC: AByte := $80;
+    $201A: AByte := $82;
+    $0192: AByte := $83;
+    $201E: AByte := $84;
+    $2026: AByte := $85;
+    $2020: AByte := $86;
+    $2021: AByte := $87;
+    $02C6: AByte := $88;
+    $2030: AByte := $89;
+    $0160: AByte := $8A;
+    $2039: AByte := $8B;
+    $0152: AByte := $8C;
+    $017D: AByte := $8E;
+    $2018: AByte := $91;
+    $2019: AByte := $92;
+    $201C: AByte := $93;
+    $201D: AByte := $94;
+    $2022: AByte := $95;
+    $2013: AByte := $96;
+    $2014: AByte := $97;
+    $02DC: AByte := $98;
+    $2122: AByte := $99;
+    $0161: AByte := $9A;
+    $203A: AByte := $9B;
+    $0153: AByte := $9C;
+    $017E: AByte := $9E;
+    $0178: AByte := $9F;
+  else
+    Result := False;
+  end;
+end;
+
+function TryDecodeWindows1252TextAsUtf8(
+  const AValue: string;
+  out ADecoded: string
+): Boolean;
+var
+  I: Integer;
+  LBytes: TBytes;
+  LByte: Byte;
+begin
+  Result := False;
+  ADecoded := '';
+  SetLength(LBytes, Length(AValue));
+
+  for I := 1 to Length(AValue) do
+  begin
+    if not TryGetWindows1252Byte(AValue[I], LByte) then
+      Exit;
+
+    LBytes[I - 1] := LByte;
+  end;
+
+  try
+    ADecoded := TEncoding.UTF8.GetString(LBytes);
+    Result := not HasUnicodeReplacementChar(ADecoded);
+  except
+    ADecoded := '';
+  end;
+end;
+{$ENDIF}
+
+function DecodePossibleUtf8Mojibake(const AValue: string): string;
+{$IFNDEF FPC}
+var
+  LDecoded: string;
+  LMarkerCount: Integer;
+{$ENDIF}
+begin
+  Result := AValue;
+
+{$IFNDEF FPC}
+  LMarkerCount := CountMojibakeMarkers(AValue);
+  if LMarkerCount = 0 then
+    Exit;
+
+  if not TryDecodeWindows1252TextAsUtf8(AValue, LDecoded) then
+    Exit;
+
+  if CountMojibakeMarkers(LDecoded) < LMarkerCount then
+    Result := LDecoded;
+{$ENDIF}
+end;
+
 function THorseRequest.Body: string;
 begin
-  Result := FWebRequest.Content;
+  Result := DecodePossibleUtf8Mojibake(FWebRequest.Content);
 end;
 
 function THorseRequest.Body(const ABody: TObject): THorseRequest;
@@ -212,7 +329,11 @@ begin
     end;
 
     if LName <> EmptyStr then
+    begin
+      LName := DecodePossibleUtf8Mojibake(LName);
+      LValue := DecodePossibleUtf8Mojibake(LValue);
       FContentFields.Dictionary.AddOrSetValue(LName, LValue);
+    end;
 
     LName := EmptyStr;
     LValue := EmptyStr;
@@ -251,6 +372,9 @@ begin
     LEqualFirstPos := Pos('=', LItem);
     LKey := Copy(LItem, 1, LEqualFirstPos - 1);
     LValue := Copy(LItem, LEqualFirstPos + 1, Length(LItem));
+    LKey := DecodePossibleUtf8Mojibake(LKey);
+    LValue := DecodePossibleUtf8Mojibake(LValue);
+
     if not FQuery.Dictionary.ContainsKey(LKey) then
       FQuery.Dictionary.AddOrSetValue(LKey, LValue)
     else
