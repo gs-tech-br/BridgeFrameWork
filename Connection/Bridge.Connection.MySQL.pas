@@ -1,4 +1,4 @@
-﻿unit Bridge.Connection.MySQL;
+unit Bridge.Connection.MySQL;
 
 interface
 

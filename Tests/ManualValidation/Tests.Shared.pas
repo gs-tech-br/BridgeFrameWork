@@ -1,4 +1,4 @@
-﻿unit Tests.Shared;
+unit Tests.Shared;
 
 interface
 
@@ -16,7 +16,7 @@ uses
 
 type
   /// <summary>
-  /// Provider de credenciais para SQLite em memória
+  /// Provider de credenciais para SQLite em memoria
   /// </summary>
   TMemoryCredentialsProvider = class(TInterfacedObject, IConnectionCredentialsProvider)
   public
@@ -73,12 +73,12 @@ type
   end;
 
 /// <summary>
-/// Cria uma conexão SQLite em memória para testes
+/// Cria uma conexao SQLite em memoria para testes
 /// </summary>
 function CreateTestConnection: IConnection;
 
 /// <summary>
-/// Cria um controller com conexão de teste
+/// Cria um controller com conexao de teste
 /// </summary>
 function CreateTestController: TBaseController; overload;
 function CreateTestController(AConnection: IConnection): TBaseController; overload;

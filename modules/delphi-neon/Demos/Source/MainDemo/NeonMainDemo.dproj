@@ -1,4 +1,4 @@
-﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{F9FFFB8A-8DD0-4212-BDA6-3D93DA044B95}</ProjectGuid>
         <MainSource>NeonMainDemo.dpr</MainSource>

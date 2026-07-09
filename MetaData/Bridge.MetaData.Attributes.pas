@@ -1,4 +1,4 @@
-﻿unit Bridge.MetaData.Attributes;
+unit Bridge.MetaData.Attributes;
 
 interface
 

@@ -1,4 +1,4 @@
-﻿unit Bridge.Connection.Log.Provider;
+unit Bridge.Connection.Log.Provider;
 
 interface
 

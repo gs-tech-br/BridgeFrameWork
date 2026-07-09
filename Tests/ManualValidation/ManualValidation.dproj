@@ -1,4 +1,4 @@
-﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{49A37FEF-67A0-46E3-B282-EC49C5CB1237}</ProjectGuid>
         <MainSource>ManualValidation.dpr</MainSource>

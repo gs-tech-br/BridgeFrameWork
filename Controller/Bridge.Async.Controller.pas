@@ -1,4 +1,4 @@
-﻿unit Bridge.Async.Controller;
+unit Bridge.Async.Controller;
 
 interface
 

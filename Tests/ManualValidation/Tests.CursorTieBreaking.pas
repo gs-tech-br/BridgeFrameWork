@@ -1,4 +1,4 @@
-﻿unit Tests.CursorTieBreaking;
+unit Tests.CursorTieBreaking;
 
 interface
 
@@ -68,23 +68,23 @@ var
   I: Integer;
   LProduct: TProduct;
 begin
-  WriteLn('=== Teste de Desempate Automático (CompositeKey + PrimaryKey) ===');
+  WriteLn('=== Teste de Desempate Automatico (CompositeKey + PrimaryKey) ===');
   WriteLn;
   
-  // Criar conexão e tabela de teste
+  // Criar conexao e tabela de teste
   LConnection := CreateTestConnection;
   CreateProductTable(LConnection);
   LController := CreateTestController(LConnection);
   
-  // Inserir dados de teste com preços duplicados para forçar desempate
-  WriteLn('Inserindo 15 produtos com preços duplicados...');
+  // Inserir dados de teste com precos duplicados para forcar desempate
+  WriteLn('Inserindo 15 produtos com precos duplicados...');
   for I := 1 to 15 do
   begin
     LProduct := TProduct.Create;
     try
       LProduct.CompanyId := ((I - 1) div 5) + 1; // 3 empresas: 1, 2, 3
       LProduct.Name := 'Product ' + IntToStr(I);
-      LProduct.Price := 10.0 + ((I - 1) mod 3) * 5.0; // Preços: 10, 15, 20 (repetidos)
+      LProduct.Price := 10.0 + ((I - 1) mod 3) * 5.0; // Precos: 10, 15, 20 (repetidos)
       LController.Insert(LProduct);
     finally
       LProduct.Free;
@@ -99,8 +99,8 @@ begin
     SetLength(LOrderBy, 1);
     LOrderBy[0] := TOrderByItem.Create('Price', False); // ASC
     
-    WriteLn('Ordenação especificada: Price ASC');
-    WriteLn('Esperado: Sistema adiciona automaticamente CompanyId e Id para desempate único');
+    WriteLn('Ordenacao especificada: Price ASC');
+    WriteLn('Esperado: Sistema adiciona automaticamente CompanyId e Id para desempate unico');
     WriteLn;
     
     LList := TObjectList<TProduct>.Create;
@@ -108,13 +108,13 @@ begin
       LPageNum := 1;
       LLastItem := nil;
       
-      WriteLn('Carregando páginas (5 registros por página):');
+      WriteLn('Carregando paginas (5 registros por pagina):');
       WriteLn;
       
       repeat
-        WriteLn(Format('--- Página %d ---', [LPageNum]));
+        WriteLn(Format('--- Pagina %d ---', [LPageNum]));
         
-        // Carregar próxima página
+        // Carregar proxima pagina
         LResult := LController.LoadNext<TProduct>(
           LList,
           LLastItem,
@@ -124,10 +124,10 @@ begin
         
         if LResult.Success then
         begin
-          // Exibir apenas os registros NOVOS (últimos 5 adicionados)
+          // Exibir apenas os registros NOVOS (ultimos 5 adicionados)
           for I := Max(0, LList.Count - 5) to LList.Count - 1 do
           begin
-            WriteLn(Format('  CompanyId: %d, ID: %d, Nome: %s, Preço: %.2f', [
+            WriteLn(Format('  CompanyId: %d, ID: %d, Nome: %s, Preco: %.2f', [
               LList[I].CompanyId,
               LList[I].Id,
               LList[I].Name,
@@ -135,14 +135,14 @@ begin
             ]));
           end;
           
-          // Guardar último item como cursor para próxima página
+          // Guardar ultimo item como cursor para proxima pagina
           if LList.Count > 0 then
             LLastItem := LList[LList.Count - 1];
           
           WriteLn;
           Inc(LPageNum);
           
-          // Limitar a 3 páginas para o teste
+          // Limitar a 3 paginas para o teste
           if LPageNum > 3 then
             Break;
         end
@@ -154,11 +154,11 @@ begin
       until not LResult.Success;
       
       WriteLn;
-      WriteLn(Format('Total de páginas carregadas: %d', [LPageNum - 1]));
+      WriteLn(Format('Total de paginas carregadas: %d', [LPageNum - 1]));
       WriteLn(Format('Total de registros na lista: %d', [LList.Count]));
       WriteLn;
-      WriteLn('✅ Se os registros estão ordenados por Price, depois CompanyId, depois Id,');
-      WriteLn('   então o desempate automático está funcionando corretamente!');
+      WriteLn('\\u2705 Se os registros estao ordenados por Price, depois CompanyId, depois Id,');
+      WriteLn('   entao o desempate automatico esta funcionando corretamente!');
       
     finally
       LList.Free;
@@ -169,7 +169,7 @@ begin
   end;
   
   WriteLn;
-  WriteLn('=== Teste Concluído ===');
+  WriteLn('=== Teste Concluido ===');
   WriteLn;
 end;
 

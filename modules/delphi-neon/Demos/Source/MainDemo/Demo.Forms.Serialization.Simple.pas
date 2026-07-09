@@ -178,7 +178,7 @@ end;
 
 procedure TfrmSerializationSimple.actSerStringExecute(Sender: TObject);
 begin
-  SerializeSimple<string>('Lorem "Ipsum" \n \\ {} итзам');
+  SerializeSimple<string>('Lorem "Ipsum" \n \\ {} eocai');
 end;
 
 procedure TfrmSerializationSimple.actSerTypesClassExecute(Sender: TObject);

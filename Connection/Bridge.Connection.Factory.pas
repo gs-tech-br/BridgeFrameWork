@@ -1,4 +1,4 @@
-﻿unit Bridge.Connection.Factory;
+unit Bridge.Connection.Factory;
 
 interface
 

@@ -1,4 +1,4 @@
-﻿unit Bridge.MetaData.Manager;
+unit Bridge.MetaData.Manager;
 
 interface
 
@@ -82,7 +82,7 @@ type
 
     function IsAutoIncrement(AObject: TObject): Boolean; overload;
     
-    // Métodos de validação depreciados - usar TValidationHelper
+    // Metodos de validacao depreciados - usar TValidationHelper
     // function AreRequiredFieldsValid(AObject: TObject): TValidate; deprecated 'Use TValidationHelper.ValidateRequiredFields';
     // function AreFieldsLengthsValid(AObject: TObject): TValidate; deprecated 'Use TValidationHelper.ValidateFieldLengths';
 
@@ -875,7 +875,7 @@ begin
     LProp := LType.GetProperty(APropName);
     if not Assigned(LProp) then
       raise Exception.CreateFmt(
-        'ERRO DE DESENVOLVIMENTO: A propriedade "%s" não existe na classe "%s".',
+        'ERRO DE DESENVOLVIMENTO: A propriedade "%s" nao existe na classe "%s".',
         [APropName, AClass.ClassName]);
   end;
   {$ENDIF}

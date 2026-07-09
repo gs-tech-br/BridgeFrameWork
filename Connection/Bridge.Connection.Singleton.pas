@@ -1,4 +1,4 @@
-﻿unit Bridge.Connection.Singleton;
+unit Bridge.Connection.Singleton;
 
 interface
 

@@ -1,4 +1,4 @@
-﻿unit Bridge.Connection.Types;
+unit Bridge.Connection.Types;
 
 interface
 

@@ -1,4 +1,4 @@
-﻿unit Bridge.Connection.Firebird;
+unit Bridge.Connection.Firebird;
 
 interface
 

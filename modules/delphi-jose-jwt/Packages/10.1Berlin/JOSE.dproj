@@ -1,4 +1,4 @@
-﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{70D69C3F-F9DD-4612-9092-D4A428DCF953}</ProjectGuid>
         <MainSource>JOSE.dpk</MainSource>

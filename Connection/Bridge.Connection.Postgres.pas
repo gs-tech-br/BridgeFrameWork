@@ -1,4 +1,4 @@
-﻿unit Bridge.Connection.Postgres;
+unit Bridge.Connection.Postgres;
 
 interface
 

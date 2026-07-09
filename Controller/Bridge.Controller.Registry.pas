@@ -1,4 +1,4 @@
-﻿unit Bridge.Controller.Registry;
+unit Bridge.Controller.Registry;
 
 interface
 

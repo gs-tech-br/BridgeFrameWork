@@ -278,7 +278,7 @@ begin
       LOperator := LCriteriaItem.SQLOperator;
       LParamName := 'p' + IntToStr(I);
 
-      // Primeiro item: prefixo WHERE; demais: operador lógico do item atual
+      // Primeiro item: prefixo WHERE; demais: operador logico do item atual
       if LWhere = '' then
         LWhere := ' WHERE '
       else
@@ -306,7 +306,7 @@ begin
       LOperator := LCriteriaItem.SQLOperator;
       LParamName := 'p' + IntToStr(I);
 
-      // Sem parâmetros para IN, IS NULL, IS NOT NULL
+      // Sem parametros para IN, IS NULL, IS NOT NULL
       if SameText(LOperator, 'IN') or
          SameText(LOperator, 'IS NULL') or
          SameText(LOperator, 'IS NOT NULL') then

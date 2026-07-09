@@ -1,4 +1,4 @@
-﻿unit Bridge.MetaData.ScriptGenerator;
+unit Bridge.MetaData.ScriptGenerator;
 
 interface
 
@@ -131,7 +131,7 @@ begin
 
     LValue := TFastField.GetAsVariant(AObject, LPropMeta.Offset, LPropMeta.TypeKind);
     // Para TDateTime: RttiField.FieldType.Name = 'TDateTime', mas TypeKind = tkFloat.
-    // VarFromDateTime garante varDate em vez de varDouble — FireDAC trata corretamente.
+    // VarFromDateTime garante varDate em vez de varDouble -- FireDAC trata corretamente.
     if (LPropMeta.TypeKind = tkFloat) and
        Assigned(LPropMeta.RttiField) and
        SameText(LPropMeta.RttiField.FieldType.Name, 'TDateTime') then
@@ -257,7 +257,7 @@ begin
 
     LValue := TFastField.GetAsVariant(AObject, LPropMeta.Offset, LPropMeta.TypeKind);
     // Para TDateTime: RttiField.FieldType.Name = 'TDateTime', mas TypeKind = tkFloat.
-    // VarFromDateTime garante varDate em vez de varDouble — FireDAC trata corretamente.
+    // VarFromDateTime garante varDate em vez de varDouble -- FireDAC trata corretamente.
     if (LPropMeta.TypeKind = tkFloat) and
        Assigned(LPropMeta.RttiField) and
        SameText(LPropMeta.RttiField.FieldType.Name, 'TDateTime') then

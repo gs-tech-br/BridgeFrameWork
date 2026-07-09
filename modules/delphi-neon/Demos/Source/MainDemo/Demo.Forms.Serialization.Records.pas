@@ -215,7 +215,7 @@ begin
   LVal[0] := 'Paolo';
   LVal[1] := 'Rossi';
   LVal[2] := '';
-  LVal[3] := 'עאטשל';
+  LVal[3] := 'oaeui';
   SerializeSimple<TArray<string>>(LVal);
 end;
 

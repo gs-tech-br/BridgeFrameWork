@@ -1,4 +1,4 @@
-﻿unit Bridge.Connection.Pool;
+unit Bridge.Connection.Pool;
 
 interface
 

@@ -1,4 +1,4 @@
-﻿unit Bridge.Controller.Helper;
+unit Bridge.Controller.Helper;
 
 interface
 
@@ -165,8 +165,8 @@ begin
     LCriteria := ACriteria;
 
   try
-    // AOrderBy é passado para FindAll no futuro quando o GenerateSelect suportar ordering.
-    // Por enquanto, ordering é feito via sql order by no LoadAll.
+    // AOrderBy e passado para FindAll no futuro quando o GenerateSelect suportar ordering.
+    // Por enquanto, ordering e feito via sql order by no LoadAll.
     Result := Self.LoadAll<T>(AList, LCriteria);
   finally
     if LOwnCriteria then

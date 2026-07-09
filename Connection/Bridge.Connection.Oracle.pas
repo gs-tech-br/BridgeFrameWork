@@ -1,4 +1,4 @@
-﻿unit Bridge.Connection.Oracle;
+unit Bridge.Connection.Oracle;
 
 interface
 

@@ -1,4 +1,4 @@
-﻿unit Bridge.Connection.SQLite;
+unit Bridge.Connection.SQLite;
 
 interface
 

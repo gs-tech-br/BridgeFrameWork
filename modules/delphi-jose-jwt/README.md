@@ -69,13 +69,13 @@ If you need the OpenSSL library on the server, you can download the package dire
 
 | _Algorithms_ | _Supported_      | 
 | -------------| -----------      |
-|  `exp`       | ✔️               |
-|  `iat`       | ✔️               |
-|  `nbf`       | ✔️               |
-|  `aud`       | ✔️               |
-|  `iss`       | ✔️               |
-|  `jti`       | ✔️               |
-|  `typ`       | ✔️               |
+|  `exp`       | \\u2714               |
+|  `iat`       | \\u2714               |
+|  `nbf`       | \\u2714               |
+|  `aud`       | \\u2714               |
+|  `iss`       | \\u2714               |
+|  `jti`       | \\u2714               |
+|  `typ`       | \\u2714               |
 
 #### Easy to use classes for compact token productiom
 - Easy to use `TJOSEProducer` and `TJOSEProducerBuilder` (alias `TJOSEProcess`) classes to build a new compact token with many options
@@ -89,17 +89,17 @@ If you need the OpenSSL library on the server, you can download the package dire
 
 | _Algorithms_ | _Supported_      | 
 | -------------| -----------      |
-|  `None`      | ✔️ don't use it! 💀 |
-|  `HS256`     | ✔️               |
-|  `HS384`     | ✔️               |
-|  `HS512`     | ✔️               |
-|  `RS256`     | ✔️ updated! 🔥   |
-|  `RS384`     | ✔️ updated! 🔥   |
-|  `RS512`     | ✔️ updated! 🔥   |
-|  `ES256`     | ✔️ new! 🌟      |
-|  `ES384`     | ✔️ new! 🌟      |
-|  `ES512`     | ✔️ new! 🌟      |
-|  `ES256K`    | ✔️ new! 🌟      |
+|  `None`      | \\u2714 don't use it! \\u1F480 |
+|  `HS256`     | \\u2714               |
+|  `HS384`     | \\u2714               |
+|  `HS512`     | \\u2714               |
+|  `RS256`     | \\u2714 updated! \\u1F525   |
+|  `RS384`     | \\u2714 updated! \\u1F525   |
+|  `RS512`     | \\u2714 updated! \\u1F525   |
+|  `ES256`     | \\u2714 new! \\u1F31F      |
+|  `ES384`     | \\u2714 new! \\u1F31F      |
+|  `ES512`     | \\u2714 new! \\u1F31F      |
+|  `ES256K`    | \\u2714 new! \\u1F31F      |
 
 #### Security notes
 - This library is not affected by the `None` algorithm vulnerability

@@ -143,7 +143,7 @@ var
   LValue: TArray<TStringDynArray>;
   LResult: string;
 begin
-  LValue := [['Zero','Uno','Due'], ['', 'η°θι'],[]];
+  LValue := [['Zero','Uno','Due'], ['', 'c\\u00B0ee'],[]];
   LResult := TTestUtils.SerializeValue(TValue.From<TArray<TStringDynArray>>(LValue));
   Assert.AreEqual(_Result, LResult);
 end;

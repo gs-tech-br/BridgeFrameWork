@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <test-results name="D:\Projetos\BridgeFrameWork\Tests\UnitTests\BridgeFramework.Tests.exe" total="3" errors="0" failures="0" ignored="0" inconclusive="0" not-run="0" skipped="0" invalid="0" date="2026-02-28" time="0.001">
   <culture-info current-culture="en" current-uiculture="en" />
   <test-suite type="Assembly" name="BridgeFramework.Tests.exe" executed="true" result="Success" success="True" time="0.001" asserts="0">

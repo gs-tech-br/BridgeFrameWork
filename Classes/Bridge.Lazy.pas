@@ -1,4 +1,4 @@
-﻿unit Bridge.Lazy;
+unit Bridge.Lazy;
 
 interface
 

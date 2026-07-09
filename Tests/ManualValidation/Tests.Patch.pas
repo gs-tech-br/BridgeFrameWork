@@ -1,4 +1,4 @@
-﻿unit Tests.Patch;
+unit Tests.Patch;
 
 interface
 
@@ -45,10 +45,10 @@ begin
       WriteLn('  Registro inserido com ID: ', LId);
       
       // Criar novo objeto para representar o PATCH
-      // No Horse, o JSON é mapeado para o objeto carregado, 
+      // No Horse, o JSON e mapeado para o objeto carregado, 
       // mas aqui vamos testar o UpdatePartial diretamente.
       LPerson.Name := 'Updated Name';
-      LPerson.Age := 99; // Este campo NÃO deve ser atualizado no BD se não estiver no array
+      LPerson.Age := 99; // Este campo NAO deve ser atualizado no BD se nao estiver no array
       
       LController.UpdatePartial(LPerson, ['Name']);
       
@@ -58,10 +58,10 @@ begin
       LController.Load(LPerson, LId);
       
       if (LPerson.Name = 'Updated Name') and (LPerson.Age = 30) then
-        WriteLn('  ✓ Sucesso: Apenas o campo Name foi atualizado!')
+        WriteLn('  \\u2713 Sucesso: Apenas o campo Name foi atualizado!')
       else
       begin
-        WriteLn('  ✗ Erro:');
+        WriteLn('  \\u2717 Erro:');
         WriteLn('    Name esperado: Updated Name, obtido: ', LPerson.Name);
         WriteLn('    Age esperado: 30, obtido: ', LPerson.Age);
       end;
@@ -106,9 +106,9 @@ begin
       LController.Load(LPerson, LId);
       
       if (LPerson.Name = 'New Name') and (LPerson.Age = 25) then
-        WriteLn('  ✓ Sucesso: Ambos os campos foram atualizados!')
+        WriteLn('  \\u2713 Sucesso: Ambos os campos foram atualizados!')
       else
-        WriteLn('  ✗ Erro na atualização de múltiplos campos');
+        WriteLn('  \\u2717 Erro na atualizacao de multiplos campos');
         
     finally
       LPerson.Free;
@@ -139,10 +139,10 @@ begin
       
       try
         LController.UpdatePartial(LPerson, ['Name']);
-        WriteLn('  ✓ Sucesso: UpdatePartial executado (SQL UPDATE não afeta linhas mas não gera erro de sintaxe)');
+        WriteLn('  \\u2713 Sucesso: UpdatePartial executado (SQL UPDATE nao afeta linhas mas nao gera erro de sintaxe)');
       except
         on E: Exception do
-          WriteLn('  ✗ Erro inesperado: ', E.Message);
+          WriteLn('  \\u2717 Erro inesperado: ', E.Message);
       end;
     finally
       LPerson.Free;
@@ -172,13 +172,13 @@ begin
       LPerson.Name := 'Test';
       LController.Insert(LPerson);
       
-      // O Controller captura exceções internas e retorna em TValidate
+      // O Controller captura excecoes internas e retorna em TValidate
       LValidate := LController.UpdatePartial(LPerson, ['InvalidField']);
       
       if not LValidate.Success then
-        WriteLn('  ✓ Sucesso: Erro detectado corretamente: ', LValidate.Message)
+        WriteLn('  \\u2713 Sucesso: Erro detectado corretamente: ', LValidate.Message)
       else
-        WriteLn('  ✗ Erro: Deveria ter retornado Sucess = False para campo inválido');
+        WriteLn('  \\u2717 Erro: Deveria ter retornado Sucess = False para campo invalido');
     finally
       LPerson.Free;
     end;
@@ -192,7 +192,7 @@ procedure RunAllPatchTests;
 begin
   WriteLn('');
   WriteLn('========================================');
-  WriteLn('  TESTES DE ATUALIZAÇÃO PARCIAL (PATCH)');
+  WriteLn('  TESTES DE ATUALIZACAO PARCIAL (PATCH)');
   WriteLn('========================================');
   WriteLn('');
   
@@ -202,7 +202,7 @@ begin
   TestPatchInvalidField;
   
   WriteLn('========================================');
-  WriteLn('  TESTES CONCLUÍDOS');
+  WriteLn('  TESTES CONCLUIDOS');
   WriteLn('========================================');
   WriteLn('');
 end;

@@ -1,4 +1,4 @@
-﻿unit Bridge.Horse.Pagination;
+unit Bridge.Horse.Pagination;
 
 interface
 

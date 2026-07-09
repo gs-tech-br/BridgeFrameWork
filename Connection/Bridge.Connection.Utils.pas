@@ -1,4 +1,4 @@
-﻿unit Bridge.Connection.Utils;
+unit Bridge.Connection.Utils;
 
 interface
 

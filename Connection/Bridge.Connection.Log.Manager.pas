@@ -1,4 +1,4 @@
-﻿unit Bridge.Connection.Log.Manager;
+unit Bridge.Connection.Log.Manager;
 
 interface
 

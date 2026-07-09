@@ -1,9 +1,9 @@
-﻿/// <summary>
-/// Bridge.Neon.Config - Configuração centralizada do Neon para o BridgeFrameWork
+/// <summary>
+/// Bridge.Neon.Config - Configuracao centralizada do Neon para o BridgeFrameWork
 /// </summary>
 /// <remarks>
-/// Esta unit fornece uma camada de abstração sobre a biblioteca Neon,
-/// centralizando a configuração de serialização JSON para APIs REST.
+/// Esta unit fornece uma camada de abstracao sobre a biblioteca Neon,
+/// centralizando a configuracao de serializacao JSON para APIs REST.
 /// </remarks>
 unit Bridge.Neon.Config;
 
@@ -21,20 +21,20 @@ uses
 
 type
   /// <summary>
-  /// Gerenciador de configuração Neon integrado ao Bridge
+  /// Gerenciador de configuracao Neon integrado ao Bridge
   /// </summary>
   TBridgeNeon = class
   private
     class var FConfig: INeonConfiguration;
   public
     /// <summary>
-    /// Define uma configuração personalizada para o Neon.
-    /// Se não for definida, usa o padrão CamelCase.
+    /// Define uma configuracao personalizada para o Neon.
+    /// Se nao for definida, usa o padrao CamelCase.
     /// </summary>
     class procedure SetConfig(AConfig: INeonConfiguration);
 
     /// <summary>
-    /// Retorna a configuração atual do Neon.
+    /// Retorna a configuracao atual do Neon.
     /// </summary>
     class function Config: INeonConfiguration;
 
@@ -69,12 +69,12 @@ type
     class procedure JSONToObject(AObject: TObject; AJSON: TJSONValue); overload;
 
     /// <summary>
-    /// Desserializa JSON criando uma nova instância do objeto
+    /// Desserializa JSON criando uma nova instancia do objeto
     /// </summary>
     class function JSONToObject<T: class, constructor>(AJSON: TJSONValue): T; overload;
 
     /// <summary>
-    /// Formata um TJSONValue como string (com ou sem indentação)
+    /// Formata um TJSONValue como string (com ou sem indentacao)
     /// </summary>
     class function Print(AJSONValue: TJSONValue; APretty: Boolean = True): string;
   end;
@@ -505,13 +505,13 @@ begin
   if not Assigned(FConfig) then
   begin
     FConfig := TNeonConfiguration.Default
-      .SetMembers([TNeonMembers.Fields])            // Serializa fields para respeitar o padrão ORM do Bridge
+      .SetMembers([TNeonMembers.Fields])            // Serializa fields para respeitar o padrao ORM do Bridge
       .SetVisibility([mvPrivate, mvProtected, mvPublic, mvPublished])
-      .SetMemberCase(TNeonCase.CamelCase)           // camelCase padrão
+      .SetMemberCase(TNeonCase.CamelCase)           // camelCase padrao
       .SetUseUTCDate(True)                          // Datas em formato UTC ISO 8601
       .SetIgnoreFieldPrefix(True)                   // Ignora prefixo "F" se serializar fields
-      .SetAutoCreate(False)                         // Não criar objetos nil automaticamente
-      .SetRaiseExceptions(False)                    // Não lançar exceções, apenas logar erros
+      .SetAutoCreate(False)                         // Nao criar objetos nil automaticamente
+      .SetRaiseExceptions(False)                    // Nao lancar excecoes, apenas logar erros
       .RegisterSerializer(TBridgeLazyListSerializer)
       .RegisterSerializer(TBridgeLazySerializer)
       .RegisterSerializer(TBridgeEntitySerializer);

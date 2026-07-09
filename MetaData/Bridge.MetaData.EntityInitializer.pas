@@ -1,4 +1,4 @@
-﻿unit Bridge.MetaData.EntityInitializer;
+unit Bridge.MetaData.EntityInitializer;
 
 interface
 

@@ -1,4 +1,4 @@
-﻿unit HlpPBKDF_Argon2NotBuildInAdapter;
+unit HlpPBKDF_Argon2NotBuildInAdapter;
 
 {$I ..\Include\HashLib.inc}
 
@@ -352,7 +352,7 @@ type
 {$ENDIF USE_MTPROCS}
     (* *
 
-      * H0 = H64(p, τ, m, t, v, y, |P|, P, |S|, S, |L|, K, |X|, X)
+      * H0 = H64(p, \\u03C4, m, t, v, y, |P|, P, |S|, S, |L|, K, |X|, X)
       * -> 64 byte (ARGON2_PREHASH_DIGEST_LENGTH)
     *)
     function InitialHash(const AParameters: IArgon2Parameters;

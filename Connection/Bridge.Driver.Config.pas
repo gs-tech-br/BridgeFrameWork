@@ -1,4 +1,4 @@
-﻿unit Bridge.Driver.Config;
+unit Bridge.Driver.Config;
 
 interface
 
@@ -7,8 +7,8 @@ uses
 
 type
   /// <summary>
-  /// Interface para configuração de drivers de banco de dados.
-  /// Permite injetar configurações customizadas de VendorLib para diferentes plataformas.
+  /// Interface para configuracao de drivers de banco de dados.
+  /// Permite injetar configuracoes customizadas de VendorLib para diferentes plataformas.
   /// </summary>
   IDriverConfigProvider = interface
     ['{A7E8C3D2-4B5F-6E1A-9C0D-8F2E7A3B5C1D}']
@@ -18,7 +18,7 @@ type
     function GetVendorLib: string;
 
     /// <summary>
-    /// Retorna o diretório base onde as bibliotecas estão localizadas (opcional)
+    /// Retorna o diretorio base onde as bibliotecas estao localizadas (opcional)
     /// </summary>
     function GetVendorHome: string;
 
@@ -42,8 +42,8 @@ type
   );
 
   /// <summary>
-  /// Implementação padrão de configuração de driver.
-  /// Retorna valores padrão baseado no sistema operacional e tipo de banco.
+  /// Implementacao padrao de configuracao de driver.
+  /// Retorna valores padrao baseado no sistema operacional e tipo de banco.
   /// </summary>
   TDefaultDriverConfig = class(TInterfacedObject, IDriverConfigProvider)
   private
@@ -65,8 +65,8 @@ type
   end;
 
   /// <summary>
-  /// Implementação customizável de configuração de driver.
-  /// Permite ao desenvolvedor definir valores específicos.
+  /// Implementacao customizavel de configuracao de driver.
+  /// Permite ao desenvolvedor definir valores especificos.
   /// </summary>
   TCustomDriverConfig = class(TInterfacedObject, IDriverConfigProvider)
   private

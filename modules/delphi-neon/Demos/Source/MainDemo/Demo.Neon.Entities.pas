@@ -676,7 +676,7 @@ begin
   Result.FirstRecord.One := 'Record text field';
   Result.FirstRecord.Two := Random(1000);
   Result.FirstProp := Random(1000);
-  Result.SecondXProp := 'Metà';
+  Result.SecondXProp := 'Meta';
   Result.ThirdPascalCaseProp := EncodeDate(2018, Random(11)+1, Random(27)+1);
   Result.BoolProp := True;
   {

@@ -1,4 +1,4 @@
-﻿unit Tests.Async;
+unit Tests.Async;
 
 interface
 
@@ -36,14 +36,14 @@ begin
   LConn := CreateTestConnection;
   CreatePersonTable(LConn);
   
-  // Configurar callbacks para usar a mesma conexão de teste
+  // Configurar callbacks para usar a mesma conexao de teste
   TAsyncController.OnAcquireConnection := function: IConnection
     begin
       Result := LConn;
     end;
   TAsyncController.OnReleaseConnection := procedure(AConn: IConnection)
     begin
-      // Não liberar - será liberado no finally
+      // Nao liberar - sera liberado no finally
     end;
   
   LController := TAsyncController.Create(LConn);
@@ -83,9 +83,9 @@ begin
     end;
     
     if LSuccess then
-      WriteLn('  ✓ Insert bem-sucedido! ID gerado: ', LGeneratedId)
+      WriteLn('  \\u2713 Insert bem-sucedido! ID gerado: ', LGeneratedId)
     else if LErrorMsg <> '' then
-      WriteLn('  ✗ Erro: ', LErrorMsg);
+      WriteLn('  \\u2717 Erro: ', LErrorMsg);
       
   finally
     LController.Free;
@@ -168,9 +168,9 @@ begin
     end;
     
     if LSuccess then
-      WriteLn('  ✓ Update bem-sucedido!')
+      WriteLn('  \\u2713 Update bem-sucedido!')
     else if LErrorMsg <> '' then
-      WriteLn('  ✗ Erro: ', LErrorMsg);
+      WriteLn('  \\u2717 Erro: ', LErrorMsg);
       
   finally
     LController.Free;
@@ -250,9 +250,9 @@ begin
     end;
     
     if LSuccess then
-      WriteLn('  ✓ Delete bem-sucedido!')
+      WriteLn('  \\u2713 Delete bem-sucedido!')
     else if LErrorMsg <> '' then
-      WriteLn('  ✗ Erro: ', LErrorMsg);
+      WriteLn('  \\u2717 Erro: ', LErrorMsg);
       
   finally
     LController.Free;
@@ -343,9 +343,9 @@ begin
     end;
     
     if LSuccess then
-      WriteLn('  ✓ Restore bem-sucedido!')
+      WriteLn('  \\u2713 Restore bem-sucedido!')
     else if LErrorMsg <> '' then
-      WriteLn('  ✗ Erro: ', LErrorMsg);
+      WriteLn('  \\u2717 Erro: ', LErrorMsg);
       
   finally
     LController.Free;
@@ -437,15 +437,15 @@ begin
     
     if LWasFound then
     begin
-      WriteLn('  ✓ Registro encontrado!');
+      WriteLn('  \\u2713 Registro encontrado!');
       WriteLn('    ID: ', LFoundId);
       WriteLn('    Name: ', LFoundName);
       WriteLn('    Age: ', LFoundAge);
     end
     else if LErrorMsg <> '' then
-      WriteLn('  ✗ Erro: ', LErrorMsg)
+      WriteLn('  \\u2717 Erro: ', LErrorMsg)
     else
-      WriteLn('  ✗ Registro não encontrado');
+      WriteLn('  \\u2717 Registro nao encontrado');
       
   finally
     LController.Free;
@@ -460,7 +460,7 @@ procedure RunAllAsyncTests;
 begin
   WriteLn('');
   WriteLn('========================================');
-  WriteLn('  TESTES DE OPERAÇÕES ASSÍNCRONAS');
+  WriteLn('  TESTES DE OPERACOES ASSINCRONAS');
   WriteLn('========================================');
   WriteLn('');
   
@@ -471,7 +471,7 @@ begin
   TestFindAsync;
   
   WriteLn('========================================');
-  WriteLn('  TESTES CONCLUÍDOS');
+  WriteLn('  TESTES CONCLUIDOS');
   WriteLn('========================================');
   WriteLn('');
 end;

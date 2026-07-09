@@ -46,21 +46,21 @@ type
     [TestCase('TestAnsiNormal', 'Paolo,"Paolo"')]
     [TestCase('TestAnsiEmpty', ',""')]
     [TestCase('TestAnsiSpace', ' ," "')]
-    [TestCase('TestAnsiExtended', 'Cantù,"Cant\u00F9"')]
+    [TestCase('TestAnsiExtended', 'Cantu,"Cant\u00F9"')]
     procedure TestAnsiString(const AValue: AnsiString; const _Result: string);
 
     [Test]
     [TestCase('TestUnicodeNormal', 'Paolo,"Paolo"')]
     [TestCase('TestUnicodeEmpty', ',""')]
     [TestCase('TestUnicodeSpace', ' ," "')]
-    [TestCase('TestUnicodeExtended', 'Cantù,"Cant\u00F9"')]
+    [TestCase('TestUnicodeExtended', 'Cantu,"Cant\u00F9"')]
     procedure TestUnicodeString(const AValue: string; const _Result: string);
 
     [Test]
     [TestCase('TestUTF8Normal', 'Paolo,"Paolo"')]
     [TestCase('TestUTF8Empty', ',""')]
     [TestCase('TestUTF8Space', ' ," "')]
-    [TestCase('TestUTF8Extended', 'Cantù,"Cant\u00F9"')]
+    [TestCase('TestUTF8Extended', 'Cantu,"Cant\u00F9"')]
     procedure TestUTF8String(const AValue: UTF8String; const _Result: string);
   end;
 

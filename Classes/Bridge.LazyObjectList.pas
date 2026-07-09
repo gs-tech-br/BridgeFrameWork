@@ -1,4 +1,4 @@
-﻿unit Bridge.LazyObjectList;
+unit Bridge.LazyObjectList;
 
 interface
 

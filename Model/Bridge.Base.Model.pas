@@ -1,4 +1,4 @@
-﻿unit Bridge.Base.Model;
+unit Bridge.Base.Model;
 
 interface
 

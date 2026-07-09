@@ -1,4 +1,4 @@
-﻿unit Bridge.Controller.Interfaces;
+unit Bridge.Controller.Interfaces;
 
 interface
 

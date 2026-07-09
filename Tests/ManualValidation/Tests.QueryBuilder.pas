@@ -1,4 +1,4 @@
-﻿unit Tests.QueryBuilder;
+unit Tests.QueryBuilder;
 
 interface
 
@@ -29,7 +29,7 @@ end;
 type
   /// <summary>
   /// Controller local para testes que gerencia a entidade TPerson.
-  /// Necessário pois TPerson não herda de TBaseModel.
+  /// Necessario pois TPerson nao herda de TBaseModel.
   /// </summary>
   TPersonController = class(TBaseController)
   public

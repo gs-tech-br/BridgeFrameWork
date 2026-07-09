@@ -1,4 +1,4 @@
-﻿{******************************************************************************}
+{******************************************************************************}
 {                                                                              }
 {  Delphi JOSE Library                                                         }
 {  Copyright (c) 2015 Paolo Rossi                                              }
@@ -42,7 +42,7 @@ type
     [Test]
     [TestCase('TestImplicit', 'aBc')]
     [TestCase('TestImplicitEmptyString', '')]
-    [TestCase('TestImplicitUnicode', 'Москва')]
+    [TestCase('TestImplicitUnicode', '\\u041C\\u043E\\u0441\\u043A\\u0432\\u0430')]
     procedure TestImplicit(const AValue: string);
 
     [Test]

@@ -1,4 +1,4 @@
-﻿unit Bridge.MetaData.Validation.Helper;
+unit Bridge.MetaData.Validation.Helper;
 
 interface
 
@@ -40,7 +40,7 @@ type
     class function ValidateObject(AObject: TObject): TValidationResult;
     class function ValidateProperty(AObject: TObject; const APropertyName: string): TValidationResult;
 
-    // Métodos movidos do Manager para validar campos obrigatórios e tamanho
+    // Metodos movidos do Manager para validar campos obrigatorios e tamanho
     class function ValidateRequiredFields(AObject: TObject): TValidationResult;
     class function ValidateFieldLengths(AObject: TObject): TValidationResult;
 

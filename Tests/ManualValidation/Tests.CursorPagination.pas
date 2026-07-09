@@ -1,4 +1,4 @@
-﻿unit Tests.CursorPagination;
+unit Tests.CursorPagination;
 
 interface
 
@@ -29,10 +29,10 @@ var
   I: Integer;
   LPerson: TPerson;
 begin
-  WriteLn('=== Teste de Paginação por Cursor ===');
+  WriteLn('=== Teste de Paginacao por Cursor ===');
   WriteLn;
   
-  // Criar conexão e tabela de teste
+  // Criar conexao e tabela de teste
   LConnection := CreateTestConnection;
   CreatePersonTable(LConnection);
   LController := CreateTestController(LConnection);
@@ -54,7 +54,7 @@ begin
   WriteLn;
 
   try
-    // Configurar ordenação por ID ASC
+    // Configurar ordenacao por ID ASC
     SetLength(LOrderBy, 1);
     LOrderBy[0] := TOrderByItem.Create('Id', False); // ASC
     
@@ -63,13 +63,13 @@ begin
       LPageNum := 1;
       LLastItem := nil;
       
-      WriteLn('Carregando páginas (5 registros por página):');
+      WriteLn('Carregando paginas (5 registros por pagina):');
       WriteLn;
       
       repeat
-        WriteLn(Format('--- Página %d ---', [LPageNum]));
+        WriteLn(Format('--- Pagina %d ---', [LPageNum]));
         
-        // Carregar próxima página
+        // Carregar proxima pagina
         LResult := LController.LoadNext<TPerson>(
           LList,
           LLastItem,
@@ -79,8 +79,8 @@ begin
         
         if LResult.Success then
         begin
-          // Exibir apenas os registros NOVOS (últimos 5 adicionados)
-          // Como LoadNext não limpa a lista, ela acumula
+          // Exibir apenas os registros NOVOS (ultimos 5 adicionados)
+          // Como LoadNext nao limpa a lista, ela acumula
           for I := Max(0, LList.Count - 5) to LList.Count - 1 do
           begin
             WriteLn(Format('  ID: %d, Nome: %s, Idade: %d', [
@@ -90,14 +90,14 @@ begin
             ]));
           end;
           
-          // Guardar último item como cursor para próxima página
+          // Guardar ultimo item como cursor para proxima pagina
           if LList.Count > 0 then
             LLastItem := LList[LList.Count - 1];
           
           WriteLn;
           Inc(LPageNum);
           
-          // Limitar a 4 páginas para o teste
+          // Limitar a 4 paginas para o teste
           if LPageNum > 4 then
             Break;
         end
@@ -110,7 +110,7 @@ begin
       until not LResult.Success;
       
       WriteLn;
-      WriteLn(Format('Total de páginas carregadas: %d', [LPageNum - 1]));
+      WriteLn(Format('Total de paginas carregadas: %d', [LPageNum - 1]));
       WriteLn(Format('Total de registros na lista: %d', [LList.Count]));
       
     finally
@@ -122,7 +122,7 @@ begin
   end;
   
   WriteLn;
-  WriteLn('=== Teste Concluído ===');
+  WriteLn('=== Teste Concluido ===');
   WriteLn;
 end;
 

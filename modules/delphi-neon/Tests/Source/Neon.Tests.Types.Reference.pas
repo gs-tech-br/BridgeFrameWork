@@ -1,4 +1,4 @@
-﻿{******************************************************************************}
+{******************************************************************************}
 {                                                                              }
 {  Neon: Serialization Library for Delphi                                      }
 {  Copyright (c) 2018 Paolo Rossi                                              }
@@ -87,7 +87,7 @@ begin
   FPerson1.AddContact(TContactType.Email, 'paolo@mail.com');
 
   FPerson2 := TPerson.Create('', -0);
-  FPerson2.AddAddress('Via Москва 334', 'Москва', 'Россия', True);
+  FPerson2.AddAddress('Via \\u041C\\u043E\\u0441\\u043A\\u0432\\u0430 334', '\\u041C\\u043E\\u0441\\u043A\\u0432\\u0430', '\\u0420\\u043E\\u0441\\u0441\\u0438\\u044F', True);
   FPerson2.AddContact(TContactType.Phone, '+39.123.4567890');
   FPerson2.AddContact(TContactType.Email, 'paolo@mail.com');
 end;

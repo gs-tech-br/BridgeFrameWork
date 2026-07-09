@@ -1,4 +1,4 @@
-﻿unit Web.WebConst;
+unit Web.WebConst;
 
 interface
 
@@ -40,8 +40,8 @@ resourcestring
     '<body' +
     '  style="display: grid; justify-content: center; height: 100vh; vertical-align: top; margin: 0; margin-top: 20px">' +
     '  <main>' +
-    '    <h1 style="font-size: 40px; color: #424242; text-align:center; line-height: 0.25">5🔥🙀</h1>' +
-    '    <p style="font-size: 24px; text-align: center; padding-left: 20px; padding-right: 20px;"><span style="color: #424242;">🐎 Internal Server Error 🐎</span><br><br><span style="color: #9e9e9e;">%0:s</span></p>' +
+    '    <h1 style="font-size: 40px; color: #424242; text-align:center; line-height: 0.25">5\\u1F525\\u1F640</h1>' +
+    '    <p style="font-size: 24px; text-align: center; padding-left: 20px; padding-right: 20px;"><span style="color: #424242;">\\u1F40E Internal Server Error \\u1F40E</span><br><br><span style="color: #9e9e9e;">%0:s</span></p>' +
     '    <p style="font-size: 18px; text-align: center; padding-left: 20px; padding-right: 20px;"><span style="color: #bdbdbd;">%1:s</span></p>' +
     '  </main>' +
     '</body>' +

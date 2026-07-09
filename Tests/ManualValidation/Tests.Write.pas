@@ -1,4 +1,4 @@
-﻿unit Tests.Write;
+unit Tests.Write;
 
 interface
 
@@ -12,7 +12,7 @@ uses
   Tests.Shared;
 
 /// <summary>
-/// Teste básico de Insert
+/// Teste basico de Insert
 /// </summary>
 procedure RunBasicInsertTest;
 

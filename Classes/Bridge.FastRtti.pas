@@ -1,12 +1,12 @@
 unit Bridge.FastRtti;
 
 ///  <summary>
-///  High-Performance RTTI - Acesso direto a campos via offset de memória.
-///  Elimina o overhead de TRttiProperty.SetValue/GetValue usando manipulação
-///  direta de ponteiros, alcançando performance ~100x superior.
+///  High-Performance RTTI - Acesso direto a campos via offset de memoria.
+///  Elimina o overhead de TRttiProperty.SetValue/GetValue usando manipulacao
+///  direta de ponteiros, alcancando performance ~100x superior.
 ///  </summary>
 ///  <remarks>
-///  IMPORTANTE: Esta abordagem requer que entidades sigam a convenção:
+///  IMPORTANTE: Esta abordagem requer que entidades sigam a convencao:
 ///  - Campos privados: FId, FNome, FDescricao, etc.
 ///  - Propriedades simples: property Id: Integer read FId write FId;
 ///  </remarks>
@@ -24,9 +24,9 @@ type
   /// </summary>
   TFastField = class
   public
-    // ══════════════════════════════════════════════════════════════════════════
-    // SETTERS - Atribuição direta na memória (~5ns vs ~500ns do SetValue)
-    // ══════════════════════════════════════════════════════════════════════════
+    // \\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550
+    // SETTERS - Atribuicao direta na memoria (~5ns vs ~500ns do SetValue)
+    // \\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550
     class procedure SetInteger(AObject: TObject; AOffset: Integer; AValue: Integer); inline;
     class procedure SetInt64(AObject: TObject; AOffset: Integer; AValue: Int64); inline;
     class procedure SetDouble(AObject: TObject; AOffset: Integer; AValue: Double); inline;
@@ -36,9 +36,9 @@ type
     class procedure SetVariant(AObject: TObject; AOffset: Integer; const AValue: Variant); inline;
     class procedure SetCurrency(AObject: TObject; AOffset: Integer; AValue: Currency); inline;
 
-    // ══════════════════════════════════════════════════════════════════════════
-    // GETTERS - Leitura direta da memória
-    // ══════════════════════════════════════════════════════════════════════════
+    // \\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550
+    // GETTERS - Leitura direta da memoria
+    // \\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550
     class function GetInteger(AObject: TObject; AOffset: Integer): Integer; inline;
     class function GetInt64(AObject: TObject; AOffset: Integer): Int64; inline;
     class function GetDouble(AObject: TObject; AOffset: Integer): Double; inline;
@@ -48,17 +48,17 @@ type
     class function GetVariant(AObject: TObject; AOffset: Integer): Variant; inline;
     class function GetCurrency(AObject: TObject; AOffset: Integer): Currency; inline;
 
-    // ══════════════════════════════════════════════════════════════════════════
-    // DISPATCHER - Seleção por TypeKind (para casos genéricos)
-    // ══════════════════════════════════════════════════════════════════════════
+    // \\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550
+    // DISPATCHER - Selecao por TypeKind (para casos genericos)
+    // \\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550
     class procedure SetByTypeKind(AObject: TObject; AOffset: Integer;
       ATypeKind: TTypeKind; const AValue: Variant);
     class function GetAsVariant(AObject: TObject; AOffset: Integer;
       ATypeKind: TTypeKind): Variant;
 
-    // ══════════════════════════════════════════════════════════════════════════
-    // UTILITY - Verificação de valor vazio por tipo
-    // ══════════════════════════════════════════════════════════════════════════
+    // \\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550
+    // UTILITY - Verificacao de valor vazio por tipo
+    // \\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550
     class function IsEmpty(AObject: TObject; AOffset: Integer;
       ATypeKind: TTypeKind): Boolean;
   end;
@@ -102,7 +102,7 @@ end;
 
 class procedure TFastField.SetDateTime(AObject: TObject; AOffset: Integer; AValue: TDateTime);
 begin
-  // TDateTime é internamente um Double
+  // TDateTime e internamente um Double
   PDouble(PByte(AObject) + AOffset)^ := AValue;
 end;
 
@@ -185,13 +185,13 @@ begin
       SetString(AObject, AOffset, VarToStr(AValue));
 
     tkEnumeration:
-      // Boolean é um caso especial de enumeration
+      // Boolean e um caso especial de enumeration
       SetBoolean(AObject, AOffset, AValue);
 
     tkVariant:
       SetVariant(AObject, AOffset, AValue);
   else
-    // Fallback para tipos não mapeados
+    // Fallback para tipos nao mapeados
     SetVariant(AObject, AOffset, AValue);
   end;
 end;

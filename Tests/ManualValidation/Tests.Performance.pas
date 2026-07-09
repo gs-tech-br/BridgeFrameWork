@@ -1,4 +1,4 @@
-﻿unit Tests.Performance;
+unit Tests.Performance;
 
 interface
 
@@ -19,12 +19,12 @@ var
   GTimeWithDeleteBatch: Double;
 
 /// <summary>
-/// Stress test sem transação
+/// Stress test sem transacao
 /// </summary>
 procedure RunStressTest;
 
 /// <summary>
-/// Stress test com transação
+/// Stress test com transacao
 /// </summary>
 procedure RunStressTestWithTransaction;
 

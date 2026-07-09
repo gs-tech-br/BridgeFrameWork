@@ -1,4 +1,4 @@
-﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{D31C86BC-AEA2-4B1C-86DA-60DD7BB636F7}</ProjectGuid>
         <MainSource>CryptoTest.dpr</MainSource>

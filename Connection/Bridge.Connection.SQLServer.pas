@@ -1,4 +1,4 @@
-﻿unit Bridge.Connection.SQLServer;
+unit Bridge.Connection.SQLServer;
 
 interface
 

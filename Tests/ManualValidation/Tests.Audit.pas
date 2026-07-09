@@ -1,4 +1,4 @@
-﻿unit Tests.Audit;
+unit Tests.Audit;
 
 interface
 
@@ -87,7 +87,7 @@ begin
       LConnection.Execute(LSQL);
       Writeln('  > TAuditLog table created successfully');
 
-      // Verificação
+      // Verificacao
       Writeln('  > Verifying table existence:');
       LQuery := LConnection.CreateDataSet('SELECT name FROM sqlite_master WHERE type=''table'' ORDER BY name');
       try

@@ -1,4 +1,4 @@
-﻿program ManualValidation;
+program ManualValidation;
 
 {$APPTYPE CONSOLE}
 

@@ -1,4 +1,4 @@
-﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{13C327F6-BA15-45B9-9E28-EABBFEE53DCF}</ProjectGuid>
         <MainSource>BridgeFrameWork.dpk</MainSource>
