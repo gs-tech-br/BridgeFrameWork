@@ -249,8 +249,17 @@ begin
   begin
     LParam := AParams[I];
     LFDParam := AQuery.ParamByName(LParam.Name);
-    // Para TDateTime (varDate), usar AsDateTime evita ambiguidade com varDouble
-    if VarType(LParam.Value) = varDate then
+
+    // Preserve nulls before assigning a typed value. VarToStr(Null) would
+    // otherwise turn a database NULL into an empty string.
+    if VarIsNull(LParam.Value) or VarIsEmpty(LParam.Value) then
+      LFDParam.Value := LParam.Value
+    // Bind all Delphi string kinds as Unicode. Letting FireDAC infer this from
+    // a Variant may choose an ANSI parameter on Linux, corrupting UTF-8 text.
+    else if LParam.TypeKind in [tkString, tkLString, tkWString, tkUString] then
+      LFDParam.AsWideString := VarToStr(LParam.Value)
+    // Para TDateTime (varDate), usar AsDateTime evita ambiguidade com varDouble.
+    else if VarType(LParam.Value) = varDate then
       LFDParam.AsDateTime := VarToDateTime(LParam.Value)
     else
       LFDParam.Value := LParam.Value;

@@ -106,6 +106,7 @@ begin
   Result.Params.Values['CharacterSet'] := 'UTF8';
   Result.LoginPrompt := False;
   Result.Connected := True;
+  Result.ExecSQL('SET client_encoding TO ''UTF8''');
 end;
 
 function TConnectionPostgres.getColumns(const ATable: string): TStringList;
