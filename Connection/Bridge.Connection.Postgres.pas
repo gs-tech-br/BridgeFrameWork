@@ -103,6 +103,7 @@ begin
   Result.Params.Database := FCredentials.GetDatabase;
   Result.Params.UserName := FCredentials.GetUserName;
   Result.Params.Password := FCredentials.GetPassword;
+  Result.Params.Values['CharacterSet'] := 'UTF8';
   Result.LoginPrompt := False;
   Result.Connected := True;
 end;
