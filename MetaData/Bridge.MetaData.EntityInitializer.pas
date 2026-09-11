@@ -208,9 +208,7 @@ begin
 
         if TControllerRegistry.Instance.HasController(LGenericType.Handle) then
         begin
-          LController := TControllerRegistry.Instance.GetController(LGenericType.Handle);
-          if Assigned(AConnection) then
-            LController.SetConnection(AConnection);
+          LController := TControllerRegistry.Instance.GetController(LGenericType.Handle, AConnection);
 
           LResult := LClass.Create;
           try
@@ -278,9 +276,7 @@ begin
           
           if TControllerRegistry.Instance.HasController(LEntityType.Handle) then
           begin
-               LController := TControllerRegistry.Instance.GetController(LEntityType.Handle);
-               if Assigned(AConnection) then
-                 LController.SetConnection(AConnection);
+               LController := TControllerRegistry.Instance.GetController(LEntityType.Handle, AConnection);
 
                if Supports(LController, IController) then
                  LController.LoadList(LResult, LCriteria);
@@ -348,9 +344,7 @@ begin
   // Now we have the Entity Type, we can find the Controller
   if TControllerRegistry.Instance.HasController(LEntityType.Handle) then
   begin
-      LController := TControllerRegistry.Instance.GetController(LEntityType.Handle);
-      if Assigned(AConnection) then
-        LController.SetConnection(AConnection);
+      LController := TControllerRegistry.Instance.GetController(LEntityType.Handle, AConnection);
 
       LCriteria := TList<TCriterion>.Create;
       try
