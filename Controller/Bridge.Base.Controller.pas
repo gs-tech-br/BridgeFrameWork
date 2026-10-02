@@ -432,7 +432,10 @@ var
 begin
   LValidation := Self.allowsDelete(Sender);
   if not LValidation.Success then
+  begin
+    Result := LValidation;
     Exit;
+  end;
 
   LOldValue := nil;
   try
