@@ -1,0 +1,3 @@
+[submodule "modules/horse-jhonson"]
+	path = modules/horse-jhonson
+	url = https://github.com/HashLoad/jhonson.git
