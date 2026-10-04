@@ -16,6 +16,9 @@ type
       // Metadata tags
       TAG_ID_MISSING = 'Tag %s used, but class %s does not have [Id] attribute';
       TAG_COMPOSITE_KEY_MISSING = 'Tag %s used, but class %s does not have [CompositeKey] attribute';
+      UNSUPPORTED_COLUMN_TYPE = 'Field %s.%s has [Column], but its type %s is not supported by the ORM. ' +
+        'Supported types: Integer, Cardinal, Int64, Double, TDateTime, TDate, TTime, Currency, Boolean, string and Variant.';
+      UNSUPPORTED_NULL_IF_ZERO = 'Field %s.%s has [NullIfZero], but its type %s is not Integer, Cardinal or Int64.';
       
       // Cache info
       CACHE_INFO = 'Cache contains metadata for %d classes';

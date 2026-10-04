@@ -42,6 +42,9 @@
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;$(DCC_Namespace)</DCC_Namespace>
         <Icon_MainIcon>$(BDS)\bin\delphi_PROJECTICON.ico</Icon_MainIcon>
         <Icns_MainIcns>$(BDS)\bin\delphi_PROJECTICNS.icns</Icns_MainIcns>
+        <DCC_UnitSearchPath>..\..\Classes;..\..\Connection;..\..\Controller;..\..\MetaData;..\..\Model;..\..\Audit;..\..\modules\horse\src;..\..\modules\horse-jhonson\src;..\..\modules\delphi-neon\Source;..\..\modules\delphi-jose-jwt\Source\Common;..\..\modules\delphi-jose-jwt\Source\JOSE;..\..\modules\hashlib4pascal\HashLib\src\Base;..\..\modules\hashlib4pascal\HashLib\src\Interfaces;..\..\modules\hashlib4pascal\HashLib\src\Utils;..\..\modules\hashlib4pascal\HashLib\src\KDF;..\..\modules\hashlib4pascal\HashLib\src\Crypto;..\..\modules\hashlib4pascal\HashLib\src\Crypto\Blake2BParams;..\..\modules\hashlib4pascal\HashLib\src\Interfaces\IBlake2BParams;..\..\modules\hashlib4pascal\HashLib\src\Nullable;$(BDS)\source\DUnitX;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_DcuOutput>.\__dcus\$(Platform)\$(Config)</DCC_DcuOutput>
+        <DCC_ExeOutput>.\bin\$(Platform)\$(Config)</DCC_ExeOutput>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
@@ -67,6 +70,7 @@
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
         <DCCReference Include="BridgeFramework.TestSample.pas"/>
+        <DCCReference Include="Bridge.Tests.ColumnTypes.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

@@ -14,6 +14,7 @@ uses
   Bridge.Connection.Types,
   Bridge.MetaData.Attributes,
   Bridge.MetaData.Manager,
+  Bridge.MetaData.Mapper,
   Bridge.FastRtti,
   Bridge.RttiHelper; 
 
@@ -80,7 +81,7 @@ begin
         LPropMeta.RttiField.Name.StartsWith('F') and
         SameText(LPropMeta.RttiField.Name.Substring(1), AColumnName)) then
     begin
-      Result := TFastField.GetAsVariant(AObject, LPropMeta.Offset, LPropMeta.TypeKind);
+      Result := TDataMapper.PropertyValue(AObject, LPropMeta);
       Exit;
     end;
   end;

@@ -130,6 +130,20 @@ type
 > [!IMPORTANT]
 > **Convencao de Nomenclatura Obrigatoria**: O framework utiliza acesso direto a memoria para maxima performance. Para que isso funcione, e **obrigatorio** que cada propriedade persistida tenha um campo privado correspondente com o prefixo 'F'. Ex: `property Endereco` deve ter um campo `FEndereco`. Se nao houver correspondencia, o campo sera ignorado pelo ORM.
 
+#### Tipos de coluna suportados
+Um campo com `[Column]` precisa ser `Integer`, `Cardinal`, `Int64`, `Double` (inclusive `TDateTime`, `TDate` e `TTime`), `Currency`, `Boolean`, `string` ou `Variant`. Qualquer outro tipo (`Byte`, `Single`, `AnsiString`, enumeracoes...) gera excecao ao montar os metadados, em vez de ser ignorado ou gravado com o tamanho errado.
+
+#### Chave estrangeira anulavel: `[NullIfZero]`
+Para uma FK que aceita NULL, use `Integer` (ou `Int64`) com `[NullIfZero]`: o ORM grava 0 como NULL, le NULL como 0, e o JSON mostra o zero como `null` (e aceita `null` como zero).
+
+```delphi
+    [Column('ID_GRUPO', 0, True)]
+    [NullIfZero]
+    FIdGrupo: Integer;
+```
+
+Reserve `Variant` para valores em que o zero e valido e diferente de NULL, como um custo desconhecido.
+
 ### 2. Usando o Controller
 Utilize o `TController` para manipular seus dados:
 

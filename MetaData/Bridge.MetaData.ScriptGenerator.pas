@@ -14,6 +14,7 @@ uses
   Bridge.Connection.Utils,
   Bridge.MetaData.Attributes,
   Bridge.MetaData.Manager,
+  Bridge.MetaData.Mapper,
   Bridge.MetaData.Consts,
   Bridge.FastRtti;
 
@@ -129,23 +130,27 @@ begin
     if Assigned(LMetaData.PrimaryKeyField) and (LPropMeta.RttiField = LMetaData.PrimaryKeyField) and LMetaData.IsAutoIncrement then
       Continue;
 
-    LValue := TFastField.GetAsVariant(AObject, LPropMeta.Offset, LPropMeta.TypeKind);
-    // Para TDateTime: RttiField.FieldType.Name = 'TDateTime', mas TypeKind = tkFloat.
-    // VarFromDateTime garante varDate em vez de varDouble -- FireDAC trata corretamente.
-    if (LPropMeta.TypeKind = tkFloat) and
-       Assigned(LPropMeta.RttiField) and
-       SameText(LPropMeta.RttiField.FieldType.Name, 'TDateTime') then
-      LValue := VarFromDateTime(TDateTime(Double(LValue)));
+    // Null for a [NullIfZero] zero; varDate for TDateTime.
+    LValue := TDataMapper.ColumnValue(AObject, LPropMeta);
 
     // Build field list
     if not LFields.IsEmpty then
       LFields := LFields + ', ';
     LFields := LFields + LColumnName;
 
-    // Build parameter placeholder list
-    LParamName := 'p' + IntToStr(LParamIndex);
     if not LParams.IsEmpty then
       LParams := LParams + ', ';
+
+    // Null (Variant properties) is written as a literal: FireDAC rejects a null
+    // parameter whose data type it cannot infer.
+    if VarIsNull(LValue) or VarIsEmpty(LValue) then
+    begin
+      LParams := LParams + 'NULL';
+      Continue;
+    end;
+
+    // Build parameter placeholder list
+    LParamName := 'p' + IntToStr(LParamIndex);
     LParams := LParams + ':' + LParamName;
 
     // Add parameter value
@@ -255,18 +260,21 @@ begin
 
     LColumnName := LPropMeta.ColumnName;
 
-    LValue := TFastField.GetAsVariant(AObject, LPropMeta.Offset, LPropMeta.TypeKind);
-    // Para TDateTime: RttiField.FieldType.Name = 'TDateTime', mas TypeKind = tkFloat.
-    // VarFromDateTime garante varDate em vez de varDouble -- FireDAC trata corretamente.
-    if (LPropMeta.TypeKind = tkFloat) and
-       Assigned(LPropMeta.RttiField) and
-       SameText(LPropMeta.RttiField.FieldType.Name, 'TDateTime') then
-      LValue := VarFromDateTime(TDateTime(Double(LValue)));
+    // Null for a [NullIfZero] zero; varDate for TDateTime.
+    LValue := TDataMapper.ColumnValue(AObject, LPropMeta);
+
+    if not LSetClause.IsEmpty then
+      LSetClause := LSetClause + ', ';
+
+    // Null goes as a literal, as in GenerateInsertScript.
+    if VarIsNull(LValue) or VarIsEmpty(LValue) then
+    begin
+      LSetClause := LSetClause + LColumnName + ' = NULL';
+      Continue;
+    end;
 
     // Build SET clause with parameters
     LParamName := 'p' + IntToStr(LParamIndex);
-    if not LSetClause.IsEmpty then
-      LSetClause := LSetClause + ', ';
     LSetClause := LSetClause + LColumnName + ' = :' + LParamName;
 
     // Add parameter value
@@ -528,7 +536,7 @@ begin
         if Assigned(LMetaData.PrimaryKeyField) and (LPropMeta.RttiField = LMetaData.PrimaryKeyField) then
           LValue := TFastField.GetAsVariant(ALastItem, LMetaData.PrimaryKeyOffset, LMetaData.PrimaryKeyTypeKind)
         else
-          LValue := TFastField.GetAsVariant(ALastItem, LPropMeta.Offset, LPropMeta.TypeKind);
+          LValue := TDataMapper.PropertyValue(ALastItem, LPropMeta);
         
         // Build sub-condition for this level
         LSubCondition := '';
@@ -564,7 +572,7 @@ begin
           begin
             LParamList[High(LParamList)] := TParamValue.Create(
               LParamName, 
-              TFastField.GetAsVariant(ALastItem, LPropMeta.Offset, LPropMeta.TypeKind),
+              TDataMapper.PropertyValue(ALastItem, LPropMeta),
               LPropMeta.TypeKind);
           end;
           

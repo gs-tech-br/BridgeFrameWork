@@ -11,6 +11,7 @@ uses
   System.Generics.Collections,
   Bridge.MetaData.Attributes,
   Bridge.MetaData.Manager,
+  Bridge.MetaData.Mapper,
   Bridge.MetaData.Consts,
   Bridge.FastRtti;
 
@@ -210,7 +211,7 @@ begin
       LMetaData := TMetaDataManager.Instance.GetMetaData(AObject);
       for LPropMeta in LMetaData.RequiredProperties do
       begin
-        LValue := TFastField.GetAsVariant(AObject, LPropMeta.Offset, LPropMeta.TypeKind);
+        LValue := TDataMapper.PropertyValue(AObject, LPropMeta);
         LFieldName := LPropMeta.RttiField.Name.Substring(1);
         
         LError := ValidateRequired(LValue, LPropMeta.TypeKind, LFieldName);
@@ -246,7 +247,7 @@ begin
       LMetaData := TMetaDataManager.Instance.GetMetaData(AObject);
       for LPropMeta in LMetaData.LengthProperties do
       begin
-        LValue := TFastField.GetAsVariant(AObject, LPropMeta.Offset, LPropMeta.TypeKind);
+        LValue := TDataMapper.PropertyValue(AObject, LPropMeta);
         LFieldName := LPropMeta.RttiField.Name.Substring(1);
         
         if not (VarIsNull(LValue) or VarIsEmpty(LValue)) then
@@ -275,7 +276,7 @@ var
 begin
   LErrors := TList<TValidationError>.Create;
   try
-    LValue := TFastField.GetAsVariant(AObject, APropMeta.Offset, APropMeta.TypeKind);
+    LValue := TDataMapper.PropertyValue(AObject, APropMeta);
     
     if Assigned(APropMeta.RttiField) then
       LPropertyName := APropMeta.RttiField.Name.Substring(1)
