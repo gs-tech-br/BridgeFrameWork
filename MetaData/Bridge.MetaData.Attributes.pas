@@ -54,6 +54,19 @@ type
   end;
 
   /// <summary>
+  /// Marks an Integer or Int64 column whose zero means NULL, typically a nullable
+  /// foreign key. The ORM writes 0 as NULL, reads NULL as 0, and JSON shows the
+  /// zero as null (and accepts null as zero). Use it instead of a Variant field.
+  /// </summary>
+  /// <example>
+  ///   [Column('ID_PARENT', 0, True)]
+  ///   [NullIfZero]
+  ///   FIdParent: Integer;
+  /// </example>
+  NullIfZeroAttribute = class(TCustomAttribute)
+  end;
+
+  /// <summary>
   /// Attribute to ignore a property during database mapping.
   /// The property will not be included in Insert/Update/Select operations.
   /// </summary>
@@ -212,6 +225,10 @@ type
     ColumnName: string;
     IsRequired: Boolean;
     MaxLength: Integer;
+    // Integer/Int64 column whose zero is stored as NULL ([NullIfZero]).
+    NullIfZero: Boolean;
+    // tkFloat field declared as Currency: a scaled Int64 in memory, not a Double.
+    IsCurrency: Boolean;
   end;
 
   TProtectedFieldMeta = record

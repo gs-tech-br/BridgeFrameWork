@@ -10,6 +10,7 @@ uses
   Bridge.Connection.Generator.Interfaces,
   Bridge.MetaData.ScriptGenerator,
   Bridge.MetaData.Manager,
+  Bridge.MetaData.Mapper,
   Bridge.MetaData.Attributes,
   Bridge.FastRtti;
 
@@ -142,18 +143,22 @@ begin
           raise Exception.CreateFmt('Cannot update key field: %s', [LFieldName]);
 
         LColumnName := LPropMeta.ColumnName;
-        LValue := TFastField.GetAsVariant(AObject, LPropMeta.Offset, LPropMeta.TypeKind);
-        // Para TDateTime: RttiField.FieldType.Name = 'TDateTime', mas TypeKind = tkFloat.
-        // VarFromDateTime garante varDate em vez de varDouble, igual ao insert/update completo.
-        if (LPropMeta.TypeKind = tkFloat) and
-           Assigned(LPropMeta.RttiField) and
-           SameText(LPropMeta.RttiField.FieldType.Name, 'TDateTime') then
-          LValue := VarFromDateTime(TDateTime(Double(LValue)));
+        // Null for a [NullIfZero] zero; varDate for TDateTime.
+        LValue := TDataMapper.ColumnValue(AObject, LPropMeta);
+
+        if not LSetClause.IsEmpty then
+          LSetClause := LSetClause + ', ';
+
+        // Null (Variant properties) goes as a literal: FireDAC rejects a null
+        // parameter whose data type it cannot infer.
+        if VarIsNull(LValue) or VarIsEmpty(LValue) then
+        begin
+          LSetClause := LSetClause + LColumnName + ' = NULL';
+          Break;
+        end;
 
         // Build SET clause with parameters
         LParamName := 'p' + IntToStr(LParamIndex);
-        if not LSetClause.IsEmpty then
-          LSetClause := LSetClause + ', ';
         LSetClause := LSetClause + LColumnName + ' = :' + LParamName;
 
         // Add parameter value

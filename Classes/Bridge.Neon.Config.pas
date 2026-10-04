@@ -82,6 +82,7 @@ type
 implementation
 
 uses
+  Bridge.FastRtti,
   Bridge.MetaData.Attributes,
   Bridge.MetaData.Manager,
   Bridge.ResponseProtection;
@@ -419,7 +420,11 @@ begin
         end;
 
         LFieldValue := LPropMeta.RttiField.GetValue(LObject);
-        LJSONValue := AContext.WriteDataMember(LFieldValue, True);
+        // [NullIfZero]: the zero is the database NULL, so the API shows null.
+        if LPropMeta.NullIfZero and (TFastField.GetAsVariant(LObject, LPropMeta.Offset, LPropMeta.TypeKind) = 0) then
+          LJSONValue := TJSONNull.Create
+        else
+          LJSONValue := AContext.WriteDataMember(LFieldValue, True);
         if Assigned(LJSONValue) then
           LJSON.AddPair(BridgeFieldToJSONName(LPropMeta.RttiField.Name), LJSONValue);
       end;
@@ -480,6 +485,13 @@ begin
       LJSONValue := LJSONObject.GetValue(BridgeFieldToJSONName(LPropMeta.RttiField.Name));
       if not Assigned(LJSONValue) then
         Continue;
+
+      // [NullIfZero]: null from the API is the zero that the ORM writes as NULL.
+      if LPropMeta.NullIfZero and (LJSONValue is TJSONNull) then
+      begin
+        TFastField.SetByTypeKind(LObject, LPropMeta.Offset, LPropMeta.TypeKind, 0);
+        Continue;
+      end;
 
       LCurrentValue := LPropMeta.RttiField.GetValue(LObject);
       LFieldValue := AContext.ReadDataMember(LJSONValue, LPropMeta.RttiField.FieldType, LCurrentValue, True);

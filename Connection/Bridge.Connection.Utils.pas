@@ -16,6 +16,7 @@ uses
   Bridge.Connection.Types,
   Bridge.MetaData.Manager,
   Bridge.MetaData.Attributes,
+  Bridge.MetaData.Mapper,
   Bridge.FastRtti,
   Bridge.Connection.Log.Manager;
 
@@ -55,6 +56,36 @@ type
 
 implementation
 
+/// <summary>
+/// Parameter type of a Variant property in a batch, taken from the first non-null
+/// row. ftUnknown when every row is null: the caller writes NULL as a literal,
+/// since FireDAC rejects an array parameter whose data type it cannot infer.
+/// Other property types keep ftUnknown and let FireDAC infer it as before.
+/// </summary>
+function BatchParamDataType(AList: TList<TObject>; const APropMeta: TPropertyMeta): TFieldType;
+var
+  LObject: TObject;
+  LValue: Variant;
+begin
+  // [NullIfZero] rows may hold NULL, so the type cannot be left to inference.
+  if APropMeta.NullIfZero then
+    if APropMeta.TypeKind = tkInt64 then
+      Exit(ftLargeint)
+    else
+      Exit(ftInteger);
+
+  Result := ftUnknown;
+  if APropMeta.TypeKind <> tkVariant then
+    Exit;
+
+  for LObject in AList do
+  begin
+    LValue := TFastField.GetVariant(LObject, APropMeta.Offset);
+    if not (VarIsNull(LValue) or VarIsEmpty(LValue)) then
+      Exit(VarTypeToDataType(VarType(LValue)));
+  end;
+end;
+
 { TBatchOperationHelper }
 
 class procedure TBatchOperationHelper.Insert(
@@ -79,6 +110,8 @@ var
   LColumnName: string;
   LGenericList: TList<TObject>;
   LCachedParams: TArray<TFDParam>;
+  LParamTypes: TList<TFieldType>;
+  LParamType: TFieldType;
 begin
   if not Assigned(AList) then
     raise Exception.Create('List cannot be null');
@@ -100,11 +133,12 @@ begin
   LFields := '';
   LParams := '';
   LMappedProperties := TList<TPropertyMeta>.Create;
+  LParamTypes := TList<TFieldType>.Create;
   LTableColumns := AGetColumns(LTableName);
   try
     for LPropMeta in LMetaData.AllProperties do
     begin
-      if Assigned(LMetaData.PrimaryKeyField) and 
+      if Assigned(LMetaData.PrimaryKeyField) and
          (LPropMeta.RttiField = LMetaData.PrimaryKeyField) and
          LMetaData.IsAutoIncrement then
         Continue;
@@ -120,17 +154,26 @@ begin
 
       LColumnName := AQuoteIdentifier(LPropMeta.ColumnName);
       LFields := LFields + LColumnName;
+
+      LParamType := BatchParamDataType(LGenericList, LPropMeta);
+      if (LPropMeta.TypeKind = tkVariant) and (LParamType = ftUnknown) then
+      begin
+        LParams := LParams + 'NULL';
+        Continue;
+      end;
+
       LParams := LParams + ':P' + IntToStr(LMappedProperties.Count);
       LMappedProperties.Add(LPropMeta);
+      LParamTypes.Add(LParamType);
     end;
 
-    if LMappedProperties.Count = 0 then
+    if LFields.IsEmpty then
       raise Exception.CreateFmt('No mappable columns found for %s', [AClassType.ClassName]);
 
     LQuery := TFDQuery.Create(nil);
     try
       LQuery.Connection := AConnection;
-      LQuery.SQL.Text := Format('INSERT INTO %s (%s) VALUES (%s)', 
+      LQuery.SQL.Text := Format('INSERT INTO %s (%s) VALUES (%s)',
         [AQuoteIdentifier(LTableName), LFields, LParams]);
 
       LQuery.Params.ArraySize := LCount;
@@ -138,7 +181,11 @@ begin
       // Cache params for faster access
       SetLength(LCachedParams, LMappedProperties.Count);
       for I := 0 to LMappedProperties.Count - 1 do
+      begin
         LCachedParams[I] := LQuery.Params[I];
+        if LParamTypes[I] <> ftUnknown then
+          LCachedParams[I].DataType := LParamTypes[I];
+      end;
 
       for I := 0 to LCount - 1 do
       begin
@@ -147,7 +194,7 @@ begin
         for J := 0 to LMappedProperties.Count - 1 do
         begin
           LPropMeta := LMappedProperties[J];
-          LValue := TFastField.GetAsVariant(LObject, LPropMeta.Offset, LPropMeta.TypeKind);
+          LValue := TDataMapper.ColumnValue(LObject, LPropMeta);
           // Access cached param directly
           LCachedParams[J].Values[I] := LValue;
         end;
@@ -159,6 +206,7 @@ begin
       LQuery.Free;
     end;
   finally
+    LParamTypes.Free;
     LMappedProperties.Free;
     LTableColumns.Free;
   end;
@@ -188,6 +236,8 @@ var
   LGenericList: TList<TObject>;
   LCachedParams: TArray<TFDParam>;
   LCachedPKParam: TFDParam;
+  LParamTypes: TList<TFieldType>;
+  LParamType: TFieldType;
 begin
   if not Assigned(AList) then raise Exception.Create('List cannot be null');
 
@@ -208,6 +258,7 @@ begin
 
   LSetClause := '';
   LMappedProperties := TList<TPropertyMeta>.Create;
+  LParamTypes := TList<TFieldType>.Create;
   LTableColumns := AGetColumns(LTableName);
   try
     for LPropMeta in LMetaData.AllProperties do
@@ -217,10 +268,19 @@ begin
       if LTableColumns.IndexOf(LPropMeta.ColumnName) = -1 then Continue;
 
       if not LSetClause.IsEmpty then LSetClause := LSetClause + ', ';
-      
+
       LColumnName := AQuoteIdentifier(LPropMeta.ColumnName);
+
+      LParamType := BatchParamDataType(LGenericList, LPropMeta);
+      if (LPropMeta.TypeKind = tkVariant) and (LParamType = ftUnknown) then
+      begin
+        LSetClause := LSetClause + LColumnName + ' = NULL';
+        Continue;
+      end;
+
       LSetClause := LSetClause + Format('%s = :P%d', [LColumnName, LMappedProperties.Count]);
       LMappedProperties.Add(LPropMeta);
+      LParamTypes.Add(LParamType);
     end;
 
     LQuery := TFDQuery.Create(nil);
@@ -235,8 +295,12 @@ begin
       // Cache params for faster access
       SetLength(LCachedParams, LMappedProperties.Count);
       for I := 0 to LMappedProperties.Count - 1 do
+      begin
         LCachedParams[I] := LQuery.Params[I];
-      
+        if LParamTypes[I] <> ftUnknown then
+          LCachedParams[I].DataType := LParamTypes[I];
+      end;
+
       LCachedPKParam := LQuery.ParamByName('PID');
 
       for I := 0 to LCount - 1 do
@@ -247,7 +311,7 @@ begin
         for J := 0 to LMappedProperties.Count - 1 do
         begin
           LPropMeta := LMappedProperties[J];
-          LValue := TFastField.GetAsVariant(LObject, LPropMeta.Offset, LPropMeta.TypeKind);
+          LValue := TDataMapper.ColumnValue(LObject, LPropMeta);
           // Access cached param directly
           LCachedParams[J].Values[I] := LValue;
         end;
@@ -263,6 +327,7 @@ begin
       LQuery.Free;
     end;
   finally
+    LParamTypes.Free;
     LMappedProperties.Free;
     LTableColumns.Free;
   end;

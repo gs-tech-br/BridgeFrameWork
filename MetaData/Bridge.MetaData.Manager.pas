@@ -57,7 +57,8 @@ type
     function GetFieldColumnInfo(AField: TRttiField; AType: TRttiType; out AColumnName: string; out ASize: Integer; out AIsRequired: Boolean): Boolean;
     function IsFieldIgnored(AField: TRttiField; AType: TRttiType): Boolean;
     function IsAutoIncrementField(AField: TRttiField; AType: TRttiType): Boolean;
-    function IsMappableType(ATypeKind: TTypeKind): Boolean;
+    function HasFieldAttribute(AField: TRttiField; AType: TRttiType; AAttributeClass: TClass): Boolean;
+    function IsMappableField(AField: TRttiField; AType: TRttiType): Boolean;
     function ExtractSoftDeleteMeta(AType: TRttiType): TSoftDeleteMeta;
     function ExtractAuditEnabled(AType: TRttiType): Boolean;
     function ExtractProtectedFieldMeta(AField: TRttiField; AType: TRttiType;
@@ -214,40 +215,49 @@ begin
   LListLength := TList<TPropertyMeta>.Create;
   LListProtected := TList<TProtectedFieldMeta>.Create;
   try
-    for LField in LType.GetFields do
-    begin
-      if not LField.Name.StartsWith('F') then
-        Continue;
-
-      if not IsMappableType(LField.FieldType.TypeKind) then
-        Continue;
-
-      if IsFieldIgnored(LField, LType) then
-        Continue;
-
-      if GetFieldColumnInfo(LField, LType, LColName, LSize, LIsRequired) then
+    try
+      for LField in LType.GetFields do
       begin
-        LPropName := LField.Name.Substring(1);
+        if not LField.Name.StartsWith('F') then
+          Continue;
 
-        LPropMeta.RttiField := LField;
-        LPropMeta.Offset := LField.Offset;
-        LPropMeta.TypeKind := LField.FieldType.TypeKind;
-        LPropMeta.ColumnName := LColName;
-        LPropMeta.MaxLength := LSize;
-        LPropMeta.IsRequired := LIsRequired;
+        if IsFieldIgnored(LField, LType) then
+          Continue;
 
-        LListAll.Add(LPropMeta);
-        Result.ColumnMappings.Add(LPropName, LColName);
+        if not IsMappableField(LField, LType) then
+          Continue;
 
-        if LIsRequired then
-          LListRequired.Add(LPropMeta);
+        if GetFieldColumnInfo(LField, LType, LColName, LSize, LIsRequired) then
+        begin
+          LPropName := LField.Name.Substring(1);
 
-        if (LSize > 0) and (LField.FieldType.TypeKind in [tkString, tkLString, tkWString, tkUString]) then
-          LListLength.Add(LPropMeta);
+          LPropMeta.RttiField := LField;
+          LPropMeta.Offset := LField.Offset;
+          LPropMeta.TypeKind := LField.FieldType.TypeKind;
+          LPropMeta.ColumnName := LColName;
+          LPropMeta.MaxLength := LSize;
+          LPropMeta.IsRequired := LIsRequired;
+          LPropMeta.NullIfZero := HasFieldAttribute(LField, LType, NullIfZeroAttribute);
+          LPropMeta.IsCurrency := (LField.FieldType.TypeKind = tkFloat) and
+            (GetTypeData(LField.FieldType.Handle)^.FloatType = ftCurr);
 
-        if ExtractProtectedFieldMeta(LField, LType, LPropMeta, LProtectedMeta) then
-          LListProtected.Add(LProtectedMeta);
+          LListAll.Add(LPropMeta);
+          Result.ColumnMappings.Add(LPropName, LColName);
+
+          if LIsRequired then
+            LListRequired.Add(LPropMeta);
+
+          if (LSize > 0) and (LField.FieldType.TypeKind in [tkString, tkLString, tkWString, tkUString]) then
+            LListLength.Add(LPropMeta);
+
+          if ExtractProtectedFieldMeta(LField, LType, LPropMeta, LProtectedMeta) then
+            LListProtected.Add(LProtectedMeta);
+        end;
       end;
+    except
+      // IsMappableField raises for unsupported [Column] types; the metadata is not cached.
+      Result.ColumnMappings.Free;
+      raise;
     end;
     Result.AllProperties := LListAll.ToArray;
     Result.RequiredProperties := LListRequired.ToArray;
@@ -759,12 +769,80 @@ begin
 end;
 
 /// <summary>
-/// Checks if a type is mappable to a database.
+/// Checks if the field or its corresponding property has an attribute of the given class.
 /// </summary>
-function TMetaDataManager.IsMappableType(ATypeKind: TTypeKind): Boolean;
+function TMetaDataManager.HasFieldAttribute(AField: TRttiField; AType: TRttiType;
+  AAttributeClass: TClass): Boolean;
+var
+  LAttribute: TCustomAttribute;
+  LProperty: TRttiProperty;
 begin
-  Result := ATypeKind in
-    [tkInteger, tkInt64, tkFloat, tkString, tkUString, tkEnumeration, tkChar, tkWChar, tkLString, tkWString];
+  for LAttribute in AField.GetAttributes do
+    if LAttribute is AAttributeClass then
+      Exit(True);
+
+  LProperty := AType.GetProperty(AField.Name.Substring(1));
+  if Assigned(LProperty) then
+    for LAttribute in LProperty.GetAttributes do
+      if LAttribute is AAttributeClass then
+        Exit(True);
+
+  Result := False;
+end;
+
+/// <summary>
+/// Decides whether a field becomes a column. Only types whose memory layout matches
+/// the TFastField accessors are accepted: Integer/Cardinal (4 bytes), Int64, Double
+/// (also TDateTime, TDate, TTime), Currency, Boolean, string (UnicodeString) and Variant.
+/// A field with [Column] and any other type raises: it used to be skipped silently
+/// (Variant) or written with a setter of the wrong size (Byte, Char, AnsiString,
+/// Single, enumerations...). [NullIfZero] is only accepted on Integer and Int64.
+/// </summary>
+function TMetaDataManager.IsMappableField(AField: TRttiField; AType: TRttiType): Boolean;
+var
+  LFieldType: TRttiType;
+  LSupported: Boolean;
+  LIsInteger: Boolean;
+  LTypeName: string;
+begin
+  LFieldType := AField.FieldType;
+  LSupported := False;
+  LIsInteger := False;
+  if Assigned(LFieldType) then
+  begin
+    LTypeName := LFieldType.Name;
+    case LFieldType.TypeKind of
+      tkInteger:
+        LIsInteger := GetTypeData(LFieldType.Handle)^.OrdType in [otSLong, otULong];
+      tkInt64:
+        LIsInteger := True;
+      tkUString, tkVariant:
+        LSupported := True;
+      tkFloat:
+        // Currency is accepted and flagged (TPropertyMeta.IsCurrency); Single, Extended
+        // and Comp have no accessor of their size.
+        LSupported := GetTypeData(LFieldType.Handle)^.FloatType in [ftDouble, ftCurr];
+      tkEnumeration:
+        LSupported := LFieldType.Handle = TypeInfo(Boolean);
+    end;
+    LSupported := LSupported or LIsInteger;
+  end
+  else
+    LTypeName := '(unknown)';
+
+  if (not LIsInteger) and HasFieldAttribute(AField, AType, NullIfZeroAttribute) then
+    raise Exception.CreateFmt(TMetaDataConsts.UNSUPPORTED_NULL_IF_ZERO, [AType.Name, AField.Name, LTypeName]);
+
+  if LSupported then
+    // A Variant without [Column] stays internal state, as before this check existed.
+    Exit((LFieldType.TypeKind <> tkVariant) or HasFieldAttribute(AField, AType, ColumnAttribute));
+
+  if HasFieldAttribute(AField, AType, ColumnAttribute) then
+    raise Exception.CreateFmt(TMetaDataConsts.UNSUPPORTED_COLUMN_TYPE, [AType.Name, AField.Name, LTypeName]);
+
+  // Fields mapped only by naming convention are skipped: writing them with a
+  // mismatched setter would corrupt the object.
+  Result := False;
 end;
 
 procedure TMetaDataManager.ClearCache;
